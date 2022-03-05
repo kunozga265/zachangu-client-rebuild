@@ -16,13 +16,13 @@ class EmployerTableSeeder extends Seeder
     public function run()
     {
         Employer::create([
-            'name'   =>  'Escom Limited',
+            'name'   =>  'Zachangu Microfinance Agency',
             'address'   =>  'Chayamba Building P. O. Box 234 Blantyre 3',
            'email'      =>  "e@g.com",
         ]);
         Employer::create([
-            'name'       =>  'Modern Elevators Limited',
-            'address'    =>  'Chipember Highway P. O. Box 234 Blantyre 3',
+            'name'       =>  'Escom Limited',
+            'address'    =>  'Chipembere Highway P. O. Box 234 Blantyre 3',
             'email'      =>  "e@g.com",
         ]);
 
