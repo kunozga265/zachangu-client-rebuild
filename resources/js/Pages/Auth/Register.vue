@@ -16,9 +16,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2">
                 <div class="m-2 md:col-span-2 flex items-center justify-center">
                     <jet-label class="p-1" for="borrower" value="Borrower" />
-                    <input id="borrower" type="radio" class="p-1" v-model="form.role" value="borrower" required />
+                    <input id="borrower" type="radio" class="p-1" v-model="form.role" value="borrower" />
                     <jet-label class="p-1 ml-2" for="guarantor" value="Guarantor" />
-                    <input id="guarantor" type="radio" class="p-1" v-model="form.role" value="guarantor" required />
+                    <input id="guarantor" type="radio" class="p-1" v-model="form.role" value="guarantor" />
                 </div>
                 <div class="mt-4" >
                     <jet-label for="firstName" value="First Name" />
