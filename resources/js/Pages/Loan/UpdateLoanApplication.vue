@@ -466,7 +466,7 @@
                 if (file){
                     reader.readAsDataURL(file);
                     reader.onload=(e)=>{
-                        axios.post("http://localhost:8000/api/file-upload",{
+                        axios.post(this.$page.props.publicPath+"file-upload",{
                             name:this.form.firstName,
                             type:"photo",
                             file:e.target.result
@@ -483,7 +483,7 @@
                 if (file){
                     reader.readAsDataURL(file);
                     reader.onload=(e)=>{
-                        axios.post("http://localhost:8000/api/file-upload",{
+                        axios.post(this.$page.props.publicPath+"file-upload",{
                             name:this.form.firstName,
                             type:"national-id",
                             file:e.target.result
@@ -500,7 +500,7 @@
                 if (file){
                     reader.readAsDataURL(file);
                     reader.onload=(e)=>{
-                        axios.post("http://localhost:8000/api/file-upload",{
+                        axios.post(this.$page.props.publicPath+"file-upload",{
                             name:this.form.firstName,
                             type:"contract",
                             file:e.target.result
@@ -517,7 +517,7 @@
                 if (file){
                     reader.readAsDataURL(file);
                     reader.onload=(e)=>{
-                        axios.post("http://localhost:8000/api/file-upload",{
+                        axios.post(this.$page.props.publicPath+"file-upload",{
                             name:this.form.firstName,
                             type:"pay-slip",
                             file:e.target.result
