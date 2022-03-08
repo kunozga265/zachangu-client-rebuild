@@ -2,7 +2,7 @@
     <app-layout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
+                Guarantee a Loan
             </h2>
         </template>
         <div class="py-12">
@@ -11,7 +11,6 @@
                     <div class="p-12 sm:px-20 bg-white border-b border-gray-200">
 
                         <div>
-                            <div class="text-2xl font-bold text-center">Guarantee a loan</div>
                             <jet-validation-errors class="mt-6" />
                             <div class="mt-6 text-center">Enter Loan Code</div>
                         </div>
@@ -23,7 +22,6 @@
                                 Proceed
                             </jet-button>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -5,6 +5,22 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="p-12 sm:px-20 bg-white border-b border-gray-200">
 
+                        <div>
+                            <inertia-link  :href="route('loan.new')">
+                                <jet-button :disabled="loan!=null">
+                                    Apply for loan
+                                </jet-button>
+                            </inertia-link>
+
+                            <inertia-link class="ml-2" :href="route('guarantor')">
+                                <jet-secondary-button>
+                                    Guarantee Loan
+                                </jet-secondary-button>
+                            </inertia-link>
+
+                            <jet-section-border />
+                        </div>
+
                         <div v-if="loan">
                             <div class="mb-4 text-3xl text-gray-800 font-bold">
                                 Current Loans
@@ -89,13 +105,13 @@
         </div>
 
 <!--        <div class="w-full h-20"></div>-->
-        <div v-show="loan==null" class=" p-6 bg-gray-800 w-full flex items-center justify-center">
+<!--        <div v-show="loan==null" class=" p-6 bg-gray-800 w-full flex items-center justify-center">
             <inertia-link :href="route('loan.new')">
                 <jet-button class="">
                     Apply for loan
                 </jet-button>
             </inertia-link>
-        </div>
+        </div>-->
 
     </div>
 </template>
@@ -104,6 +120,7 @@
 
     import JetLabel from '@/Jetstream/Label.vue'
     import JetButton from '@/Jetstream/Button.vue'
+    import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
     import JetValidationErrors from '@/Jetstream/ValidationErrors.vue'
     import JetInput from '@/Jetstream/Input'
     import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
@@ -114,6 +131,7 @@
         components: {
             JetLabel,
             JetButton,
+            JetSecondaryButton,
             JetValidationErrors,
             JetInput,
             JetSectionBorder,

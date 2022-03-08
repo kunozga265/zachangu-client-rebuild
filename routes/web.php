@@ -35,9 +35,9 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
      * URL: /
      * Method: GET
     */
-    Route::get('/', [
-        UserController::class,"redirect",
-    ])->name('home');
+//    Route::get('/', [
+//        UserController::class,"redirect",
+//    ])->name('home');
 
     /*
      * ------------------------------------------------------
@@ -46,9 +46,9 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
      * URL: /
      * Method: GET
     */
-    Route::get('/dashboard', [
+    Route::get('/', [
         "uses" => "App\Http\Controllers\UserController@index",
-        'roles' =>['borrower']
+        'roles' =>['client']
     ])->name('dashboard');
 
     /*
@@ -60,7 +60,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
     */
     Route::post('/employer/select', [
         "uses" => "App\Http\Controllers\UserController@employerSelect",
-        'roles' =>['borrower']
+        'roles' =>['client']
     ])->name('employer.select');
 
 
@@ -73,8 +73,9 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
          * URL: /loan/history
          * Method: GET
         */
-        Route::get('/history',[
+        Route::get('/history/{role}',[
             "uses" => "App\Http\Controllers\LoanController@index",
+            'roles' =>['verified']
         ])->name('loan.index');
 
 
@@ -87,7 +88,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/new', [
             "uses" => "App\Http\Controllers\LoanController@create",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.new');
 
         /*
@@ -99,7 +100,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/new', [
             "uses" => "App\Http\Controllers\LoanController@store",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.store');
 
         /*
@@ -111,7 +112,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/new/subscribed', [
             "uses" => "App\Http\Controllers\LoanController@storeSubscribed",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.subscribed');
 
         /*
@@ -123,7 +124,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/view/{code}', [
             "uses" => "App\Http\Controllers\LoanController@show",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.show');
 
         /*
@@ -135,7 +136,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/edit/{code}', [
             "uses" => "App\Http\Controllers\LoanController@edit",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.edit');
 
         /*
@@ -147,7 +148,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/edit/{code}', [
             "uses" => "App\Http\Controllers\LoanController@update",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.update');
 
         /*
@@ -159,7 +160,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/apply/{code}', [
             "uses" => "App\Http\Controllers\LoanController@apply",
-            'roles' =>['borrower']
+            'roles' =>['verified']
         ])->name('loan.apply');
     });
 
@@ -172,9 +173,9 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         * URL: /
         * Method: GET
         */
-        Route::get('/dashboard', [
+        Route::get('/', [
             "uses" => "App\Http\Controllers\UserController@guarantorDashboardView",
-            'roles' =>['guarantor']
+            'roles' =>['verified']
         ])->name('guarantor');
 
         /*
@@ -186,7 +187,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/guarantee/{code}', [
             "uses" => "App\Http\Controllers\GuarantorController@create",
-            'roles' =>['guarantor']
+            'roles' =>['verified']
         ])->name('guarantor.create');
 
         /*
@@ -198,7 +199,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/guarantee/{code}', [
             "uses" => "App\Http\Controllers\GuarantorController@guarantee",
-            'roles' =>['guarantor']
+            'roles' =>['verified']
         ])->name('guarantor.guarantee');
 
         /*
@@ -210,13 +211,10 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/loan/{code}', [
             "uses" => "App\Http\Controllers\GuarantorController@show",
-            'roles' =>['guarantor']
+            'roles' =>['verified']
         ])->name('guarantor.show');
 
     });
-
-
-
 
 });
 

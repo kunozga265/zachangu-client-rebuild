@@ -313,6 +313,7 @@
             //Personal Information
             this.form.photo= this.loan.photo
             this.form.firstName= this.loan.firstName
+            this.form.middleName= this.loan.middleName
             this.form.lastName= this.loan.lastName
             this.form.phoneNumberMobile= this.loan.phoneNumberMobile
             this.form.phoneNumberWork= this.loan.phoneNumberWork

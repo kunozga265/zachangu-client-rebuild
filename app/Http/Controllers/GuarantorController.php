@@ -19,20 +19,27 @@ class GuarantorController extends Controller
 
         if (is_object($loan)){
 
-            $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
-            $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
-            $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
-            $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
-            $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
-            $loan->contractDuration=date('jS F, Y',$loan->contractDuration);
-            $loan->physicalAddress=json_decode($loan->physicalAddress);
-            $loan->workAddress=json_decode($loan->workAddress);
+            if ($loan->user->id != Auth::id()){
+                $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
+                $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
+                $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
+                $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
+                $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
+                $loan->contractDuration=date('jS F, Y',$loan->contractDuration);
+                $loan->physicalAddress=json_decode($loan->physicalAddress);
+                $loan->workAddress=json_decode($loan->workAddress);
 
-            //return Loan view
-            return Inertia::render('Guarantor/Guarantee',[
-                'loan'=>$loan,
-                'termsAndConditionsGuarantor'=>$this->termsAndConditions($loan, $loan->physicalAddress,$loan->dueDate),
-            ]);
+                $user=User::find(Auth::id());
+
+                //return Loan view
+                return Inertia::render('Guarantor/Guarantee',[
+                    'loan'=>$loan,
+                    'termsAndConditionsGuarantor'=>$this->termsAndConditions($loan, $user->address,$loan->dueDate),
+                ]);
+            }else
+                return Redirect::route('guarantor')->with('error','You cannot guarantee your own loan.');
+
+
         }else
             return Redirect::route('guarantor')->with('error','Invalid code. Try again.');
 
@@ -44,11 +51,12 @@ class GuarantorController extends Controller
         $loan=Loan::where('code',$code)->first();
 
         if (is_object($loan)) {
+            $user=User::find(Auth::id());
 
             $loan->update([
                 'progress' => 2,
                 'guarantor_id' => Auth::id(),
-                'termsAndConditionsGuarantor' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),date('jS F, Y',$loan->dueDate)),
+                'termsAndConditionsGuarantor' => $this->termsAndConditions($loan,$user->address,date('jS F, Y',$loan->dueDate)),
                 'guarantorDate'=>Carbon::now()->getTimestamp()
             ]);
 
@@ -82,7 +90,7 @@ class GuarantorController extends Controller
 
     }
 
-    private function termsAndConditions($loan, $decodedAddress, $dueDate): string
+    private function termsAndConditions($loan, $address, $dueDate): string
     {
         $user=User::find(Auth::id());
         $fullname =$user->firstName.' '.$user->lastName;
@@ -93,7 +101,7 @@ class GuarantorController extends Controller
         $year=date('Y');
 
         $employeeName =$loan->firstName.' '.$loan->lastName;
-        $address = $decodedAddress->name.' P. O. Box '.$decodedAddress->box.' '.$decodedAddress->location;
+
 
         $interest=10;
 

@@ -57,6 +57,12 @@
 
                             <jet-section-border />
 
+                            <div class="p-12 w-full flex justify-center">
+                                <div>
+                                    <div class="text-7xl text-center font-extrabold mt-6">{{ loan.score }}%</div>
+                                </div>
+                            </div>
+
                             <!-- Personal Information -->
                             <div class="">
                                 <div class="flex items-center justify-start">

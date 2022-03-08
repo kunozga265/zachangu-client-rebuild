@@ -43,9 +43,21 @@
 
             <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autocomplete="name" />
-                <jet-input-error :message="form.errors.name" class="mt-2" />
+                <jet-label for="firstName" value="First Name" />
+                <jet-input id="firstName" type="text" class="mt-1 block w-full" v-model="form.firstName" autocomplete="first-name" />
+                <jet-input-error :message="form.errors.firstName" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="middleName" value="Last Name" />
+                <jet-input id="middleName" type="text" class="mt-1 block w-full" v-model="form.middleName" autocomplete="middle-name" />
+                <jet-input-error :message="form.errors.middleName" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="lastName" value="Last Name" />
+                <jet-input id="lastName" type="text" class="mt-1 block w-full" v-model="form.lastName" autocomplete="last-name" />
+                <jet-input-error :message="form.errors.lastName" class="mt-2" />
             </div>
 
             <!-- Email -->
@@ -54,6 +66,14 @@
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />
                 <jet-input-error :message="form.errors.email" class="mt-2" />
             </div>
+
+
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="address" value="Address" />
+                <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" autocomplete="middle-name" />
+                <jet-input-error :message="form.errors.address" class="mt-2" />
+            </div>
+
         </template>
 
         <template #actions>
@@ -94,8 +114,11 @@
             return {
                 form: this.$inertia.form({
                     _method: 'PUT',
-                    name: this.user.name,
+                    firstName: this.user.firstName,
+                    middleName: this.user.middleName,
+                    lastName: this.user.lastName,
                     email: this.user.email,
+                    address: this.user.address,
                     photo: null,
                 }),
 

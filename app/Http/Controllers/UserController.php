@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employer;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,9 @@ class UserController extends Controller
                 $user->update([
                     'employer_id'=>$employer->id
                 ]);
+
+                $role=Role::where('name','verified')->first();
+                $user->roles()->attach($role);
 
 //                return Inertia::render('Dashboard');
                 return Redirect::route('dashboard');

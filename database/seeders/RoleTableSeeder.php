@@ -15,11 +15,15 @@ class RoleTableSeeder extends Seeder
     public function run()
     {
         Role::create([
-            'name'=>'borrower'
+            'name'=>'client'
         ]);
 
         Role::create([
-            'name'=>'guarantor'
+            'name'=>'verified'
+        ]);
+
+        Role::create([
+            'name'=>'admin'
         ]);
     }
 }

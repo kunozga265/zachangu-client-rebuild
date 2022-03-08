@@ -25,15 +25,16 @@ use Inertia\Inertia;
 
 class LoanController extends Controller
 {
-    public function index()
+    public function index($role)
     {
         $user=User::find(Auth::id());
 
-        if($user->hasRole('borrower')){
+        if($role=='applied'){
             $loans=$user->loans()->orderBy('appliedDate','DESC')->get();
 
             return Inertia::render('Loan/Index', [
                 'loans' => $loans,
+                'role'=>$role
             ]);
 
         }else{
@@ -43,8 +44,9 @@ class LoanController extends Controller
                 $loan->appliedDate=date('jS F, Y',$loan->appliedDate);
             }
 
-            return Inertia::render('Guarantor/Index', [
+            return Inertia::render('Loan/Index', [
                 'loans' => $loans,
+                'role'=>$role
             ]);
 
         }
@@ -536,7 +538,7 @@ class LoanController extends Controller
 
         return "
 
-<div class='mt-4'><strong>Guarantor Agreement [03/00]</strong></div>
+<div class='mt-4'><strong>Employer Agreement [01/00]</strong></div>
 <div class='mt-4'><strong>Issued on: $issuedDate</strong></div>
 <div class='mt-4'>This Loan Agreement (this “Agreement”), is executed as of this <span class='underline font-bold'>$day</span> day of <span class='underline font-bold'>$month, $year</span> (the “Effective Date”)&nbsp;</div>
 <div class='mt-4'>By and between&nbsp;</div>
@@ -544,7 +546,7 @@ class LoanController extends Controller
 <div class='mt-4'>And&nbsp;</div>
 <div class='mt-4'><strong>ZACHANGU MICROFINANCE AGENCY</strong>, located at <strong>AREA 49-SHIRE</strong>, hereinafter referred to as the “Lender”;&nbsp;</div>
 <div class='mt-4'><strong>WHEREAS</strong> at the request of the Borrower, the Lender has agreed to grant a Payday Loan of <span class='underline font-bold'>MK$loan->amount</span> to the Borrower till <span class='underline font-bold'>$dueDate</span> on terms and conditions hereinafter contained.</div>
-<div class='mt-4'><strong>PLEASE NOTE: THIS AGREEMENT IS CORRELATED WITH AGREEMENT [01/00] and [03/00]</strong></div>
+<div class='mt-4'><strong>PLEASE NOTE: THIS AGREEMENT IS CORRELATED WITH AGREEMENT [02/00] and [03/00]</strong></div>
 <div class='mt-4'>The parties agree as follows:&nbsp;</div>
 <div class='mt-4'>1. <strong>Loan Amount</strong>: The Lender agrees to loan the Employee the principal sum of <span class='underline font-bold'>MK$loan->amount</span> (Not more than MK200,000.00).&nbsp;</div>
 <div class='mt-4'>2. <strong>Interest:</strong> The payday loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$loan->payDay</span></div>

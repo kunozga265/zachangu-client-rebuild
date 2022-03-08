@@ -24,8 +24,8 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             'firstName' => ['required', 'string', 'max:255'],
             'lastName' => ['required', 'string', 'max:255'],
-            'nationalId' => ['required', 'string', 'max:8'],
-//            'employerId' => ['required', 'integer'],
+            'nationalId' => ['required', 'string', 'min:8','unique:users'],
+            'address' => ['required'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
@@ -46,18 +46,8 @@ class CreateNewUser implements CreatesNewUsers
 
         $user->save();
 
-        switch($input['role']){
-            case 'borrower':
-                $role=Role::where('name','borrower')->first();
-                $user->roles()->attach($role);
-                break;
-            case 'guarantor':
-                $role=Role::where('name','guarantor')->first();
-                $user->roles()->attach($role);
-                break;
-            default:
-                break;
-        }
+        $role=Role::where('name','client')->first();
+        $user->roles()->attach($role);
 
         return $user;
 

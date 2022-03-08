@@ -27,6 +27,6 @@ class CheckRole
         if($user->hasAnyRole($roles)||!$roles){
             return $next($request);
         }else
-            return Redirect::route('home');
+            return Redirect::route('dashboard');
     }
 }

@@ -14,17 +14,17 @@
 
         <form @submit.prevent="submit">
             <div class="grid grid-cols-1 md:grid-cols-2">
-                <div class="m-2 md:col-span-2 flex items-center justify-center">
+<!--                <div class="m-2 md:col-span-2 flex items-center justify-center">
                     <jet-label class="p-1" for="borrower" value="Borrower" />
                     <input id="borrower" type="radio" class="p-1" v-model="form.role" value="borrower" />
                     <jet-label class="p-1 ml-2" for="guarantor" value="Guarantor" />
                     <input id="guarantor" type="radio" class="p-1" v-model="form.role" value="guarantor" />
-                </div>
-                <div class="mt-4" >
+                </div>-->
+                <div class="" >
                     <jet-label for="firstName" value="First Name" />
                     <jet-input id="firstName" type="text" class="mt-1 block w-full" v-model="form.firstName" required  autocomplete="First Name" />
                 </div>
-                <div class="mt-4 md:ml-4" >
+                <div class="mt-4 md:mt-0 md:ml-4" >
                     <jet-label for="middleName" value="Middle Name" />
                     <jet-input id="middleName" type="text" class="mt-1 block w-full" v-model="form.middleName" autocomplete="Middle Name" />
                 </div>
@@ -42,7 +42,7 @@
                     <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
                 </div>
 
-                <div class="mt-4 md:col-span-2" v-if="form.role==='guarantor'">
+                <div class="mt-4 md:col-span-2"">
                     <jet-label for="address" value="Address" />
                     <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" required />
                 </div>
@@ -105,7 +105,6 @@
         data() {
             return {
                 form: this.$inertia.form({
-                    role:'borrower',
                     firstName: '',
                     middleName: null,
                     lastName: '',

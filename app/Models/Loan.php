@@ -12,7 +12,7 @@ class Loan extends Model
 
     public function user()
     {
-        return $this->belongsTo(UserController::class);
+        return $this->belongsTo(User::class);
     }
 
     protected $fillable=[
