@@ -34,16 +34,21 @@
 <!--            </div>-->
 
             <div class="flex items-center justify-end mt-4">
-                <inertia-link  :href="route('register')"  class=" underline text-sm text-gray-600 hover:text-gray-900">
-                    New account?
+                <inertia-link  :href="route('register')"  >
+                    <jet-secondary-button>
+                        Register
+                    </jet-secondary-button>
                 </inertia-link>
-                <inertia-link v-if="canResetPassword" :href="route('password.request')" class="ml-2 md:ml-4 underline text-sm text-gray-600 hover:text-gray-900">
-                    Forgot your password?
-                </inertia-link>
+
 
                 <jet-button class="ml-2 md:ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Login
                 </jet-button>
+            </div>
+            <div class="mt-4 flex items-center justify-end">
+                <inertia-link v-if="canResetPassword" :href="route('password.request')" class="ml-2 md:ml-4 underline text-sm text-gray-600 hover:text-gray-900">
+                    Forgot your password?
+                </inertia-link>
             </div>
         </form>
     </jet-authentication-card>
@@ -53,6 +58,7 @@
     import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
     import JetButton from '@/Jetstream/Button'
+    import JetSecondaryButton from '@/Jetstream/SecondaryButton'
     import JetInput from '@/Jetstream/Input'
     import JetCheckbox from '@/Jetstream/Checkbox'
     import JetLabel from '@/Jetstream/Label'
@@ -63,6 +69,7 @@
             JetAuthenticationCard,
             JetAuthenticationCardLogo,
             JetButton,
+            JetSecondaryButton,
             JetInput,
             JetCheckbox,
             JetLabel,
