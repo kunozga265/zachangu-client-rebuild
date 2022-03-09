@@ -2,9 +2,11 @@
 
 namespace App\Actions\Fortify;
 
+use App\Mail\WelcomeMail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
@@ -48,6 +50,8 @@ class CreateNewUser implements CreatesNewUsers
 
         $role=Role::where('name','client')->first();
         $user->roles()->attach($role);
+
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         return $user;
 
