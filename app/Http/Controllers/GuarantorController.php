@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmployeePendingMail;
+use App\Mail\EmployerPendingMail;
+use App\Models\Employee;
 use App\Models\Loan;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -59,6 +63,10 @@ class GuarantorController extends Controller
                 'termsAndConditionsGuarantor' => $this->termsAndConditions($loan,$user->address,date('jS F, Y',$loan->dueDate)),
                 'guarantorDate'=>Carbon::now()->getTimestamp()
             ]);
+
+ 	    $employee=Employee::where('nationalId',$loan->nationalId)->first();
+            Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee));
+            Mail::to($employee->employer->proxyEmail)->cc('admin@zachanguloans.com')->send(new EmployerPendingMail($loan,$employee->employer->proxyName));
 
             return Redirect::route('guarantor.show',['code'=>$loan->code]);
 
