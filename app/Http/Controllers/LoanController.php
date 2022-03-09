@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmployeePendingMail;
+use App\Mail\EmployerPendingMail;
 use App\Models\Employee;
 use App\Models\Loan;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -114,8 +117,10 @@ class LoanController extends Controller
             $loan->physicalAddress=json_decode($loan->physicalAddress);
             $loan->workAddress=json_decode($loan->workAddress);
 
+            $employee=Employee::where('nationalId',$loan->nationalId)->first();
+
             return Inertia::render('Loan/Show', [
-                'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$loan->dueDate),
+                'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$loan->dueDate,$employee),
                 'loan' => $loan,
                 'contractDuration'=>$contractDuration,
                 'contractDurationDate'  => date('jS F, Y',$contractDuration),
@@ -374,9 +379,10 @@ class LoanController extends Controller
         $loan=$user->loans()->where('code',$code)->first();
 
         if (is_object($loan)) {
+ 	    $employee=Employee::where('nationalId',$loan->nationalId)->first();
             $loan->update([
                 'progress' => 1,
-                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),date('jS F, Y',$loan->dueDate)),
+                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),date('jS F, Y',$loan->dueDate),$employee),
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
 
@@ -384,6 +390,7 @@ class LoanController extends Controller
             $user->update([
                 'subscription'=>Carbon::today()->addMonth(3)->getTimestamp()
             ]);
+
 
             return Redirect::route('loan.show',['code'=>$loan->code]);
 
@@ -524,7 +531,7 @@ class LoanController extends Controller
             return $lowercaseExt;
     }
 
-    private function termsAndConditions($loan, $decodedAddress, $dueDate): string
+    private function termsAndConditions($loan, $decodedAddress, $dueDate, $employee): string
     {
         $issuedDate=date('d/m/y');
         $day=date('d');
@@ -549,23 +556,24 @@ class LoanController extends Controller
 <div class='mt-4'><strong>PLEASE NOTE: THIS AGREEMENT IS CORRELATED WITH AGREEMENT [02/00] and [03/00]</strong></div>
 <div class='mt-4'>The parties agree as follows:&nbsp;</div>
 <div class='mt-4'>1. <strong>Loan Amount</strong>: The Lender agrees to loan the Employee the principal sum of <span class='underline font-bold'>MK$loan->amount</span> (Not more than MK200,000.00).&nbsp;</div>
-<div class='mt-4'>2. <strong>Interest:</strong> The payday loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$loan->payDay</span></div>
+<div class='mt-4'>2. <strong>Transfer</strong>: Funds will be transferred by the lender to account number <span class='underline font-bold'>$employee->bankAccountNumber</span> held by <span class='underline font-bold'>$employee->bankName</span>  under the name <span class='underline font-bold'>$employee->bankAccountName </span> </div>
+<div class='mt-4'>3. <strong>Interest:</strong> The payday loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$loan->payDay</span></div>
 <div class='mt-4'>Calculations are as follows:&nbsp;</div>
-<div class='mt-4'>3. <strong>Repayment of Loan</strong>: The Loan, together with accrued and unpaid interest and all other charges, costs and expenses, is due and payable on or before <span class='underline font-bold'>$dueDate</span>.&nbsp;</div>
-<div class='mt-4'>4. <strong>Penalty:</strong> Where the employer fails to honor the date of repayment for the loan, he/she will be given three days as grace period. If the Borrower fails to pay within the grace period of three days, after the three days, each day the borrower agrees to pay 10% of the due payment till payment is made. The Borrower will also pay to the Lender all charges the Lender met to collect the overdue payment.&nbsp;</div>
-<div class='mt-4'>5. <strong>Guarantee:</strong> Guarantor’s Full Name located at Guarantor’s Complete Address (the “Guarantor”) promises to unconditionally guarantee to the Lender, the full payment and performance by Borrower of all duties and obligations arising under this Agreement. The Guarantor agrees that this guarantee shall remain in full force and effect and be binding on the Guarantor until this Agreement is satisfied.&nbsp;</div>
-<div class='mt-4'>6. <strong>Prepayment:</strong> The Borrower has the right to prepay all or any part of the Loan, together with accrued and unpaid interest thereon, at any time without prepayment penalty or premium of any kind.&nbsp;</div>
-<div class='mt-4'>7. <strong>Costs and Expenses</strong>: Borrower shall pay to the Lender all costs of collection, including reasonable attorney's fees, the Lender incurs in enforcing this Agreement.&nbsp;</div>
-<div class='mt-4'>8. <strong>Waiver:</strong> The Borrower and all sureties, guarantors and endorsers here of, waive presentment, protest and demand, notice of protest, demand and dishonor and nonpayment of this Agreement.&nbsp;</div>
-<div class='mt-4'>9. <strong>Successors and Assigns</strong>: This Agreement will inure to the benefit of and be binding on the respective successors and permitted assigns of the Lender and the Borrower.&nbsp;</div>
-<div class='mt-4'>10. <strong>Amendment:</strong> This Agreement may be amended or modified only by a written agreement, duly signed by both the Borrower and the Lender.&nbsp;</div>
-<div class='mt-4'>11. <strong>Notices:</strong> Any notice or communication under this Loan must be in writing and sent via email.</div>
-<div class='mt-4'>12. <strong>No Waiver:</strong> Lender shall not be deemed to have waived any provision of this Agreement or the exercise of any rights held under this Agreement unless such waiver is made expressly and in writing. Waiver by Lender of a breach or violation of any provision of this Agreement shall not constitute a waiver of any other subsequent breach or violation.&nbsp;</div>
-<div class='mt-4'>13. <strong>Severability:</strong> In the event that any of the provisions of this Agreement are held to be invalid or unenforceable in whole or in part, the remaining provisions shall not be affected and shall continue to be valid and enforceable as though the invalid or unenforceable parts had not been included in this Agreement.&nbsp;</div>
-<div class='mt-4'>14. <strong>Assignment:</strong> Borrower shall not assign this Agreement, in whole or in part, without the written consent of Lender. Lender may assign all or any portion of this Agreement with written notice to Borrower.&nbsp;</div>
-<div class='mt-4'>15. <strong>Governing Law:</strong> This Agreement shall be governed by and construed in accordance with the laws of the Republic of Malawi, not including its conflicts of law provisions.&nbsp;</div>
-<div class='mt-4'>16. <strong>Disputes:</strong> Any dispute arising from this Agreement shall be resolved in the courts of the Republic of Malawi.&nbsp;</div>
-<div class='mt-4'>17. <strong>Entire Agreement:</strong> This Agreement contains the entire understanding between the parties and supersedes and cancels all prior agreements of the parties, whether oral or written, with respect to such subject matter.&nbsp;</div>
+<div class='mt-4'>4. <strong>Repayment of Loan</strong>: The Loan, together with accrued and unpaid interest and all other charges, costs and expenses, is due and payable on or before <span class='underline font-bold'>$dueDate</span>.&nbsp;</div>
+<div class='mt-4'>5. <strong>Penalty:</strong> Where the employer fails to honor the date of repayment for the loan, he/she will be given three days as grace period. If the Borrower fails to pay within the grace period of three days, after the three days, each day the borrower agrees to pay 10% of the due payment till payment is made. The Borrower will also pay to the Lender all charges the Lender met to collect the overdue payment.&nbsp;</div>
+<div class='mt-4'>6. <strong>Guarantee:</strong> Guarantor’s Full Name located at Guarantor’s Complete Address (the “Guarantor”) promises to unconditionally guarantee to the Lender, the full payment and performance by Borrower of all duties and obligations arising under this Agreement. The Guarantor agrees that this guarantee shall remain in full force and effect and be binding on the Guarantor until this Agreement is satisfied.&nbsp;</div>
+<div class='mt-4'>7. <strong>Prepayment:</strong> The Borrower has the right to prepay all or any part of the Loan, together with accrued and unpaid interest thereon, at any time without prepayment penalty or premium of any kind.&nbsp;</div>
+<div class='mt-4'>8. <strong>Costs and Expenses</strong>: Borrower shall pay to the Lender all costs of collection, including reasonable attorney's fees, the Lender incurs in enforcing this Agreement.&nbsp;</div>
+<div class='mt-4'>9. <strong>Waiver:</strong> The Borrower and all sureties, guarantors and endorsers here of, waive presentment, protest and demand, notice of protest, demand and dishonor and nonpayment of this Agreement.&nbsp;</div>
+<div class='mt-4'>10. <strong>Successors and Assigns</strong>: This Agreement will inure to the benefit of and be binding on the respective successors and permitted assigns of the Lender and the Borrower.&nbsp;</div>
+<div class='mt-4'>11. <strong>Amendment:</strong> This Agreement may be amended or modified only by a written agreement, duly signed by both the Borrower and the Lender.&nbsp;</div>
+<div class='mt-4'>12. <strong>Notices:</strong> Any notice or communication under this Loan must be in writing and sent via email.</div>
+<div class='mt-4'>13. <strong>No Waiver:</strong> Lender shall not be deemed to have waived any provision of this Agreement or the exercise of any rights held under this Agreement unless such waiver is made expressly and in writing. Waiver by Lender of a breach or violation of any provision of this Agreement shall not constitute a waiver of any other subsequent breach or violation.&nbsp;</div>
+<div class='mt-4'>14. <strong>Severability:</strong> In the event that any of the provisions of this Agreement are held to be invalid or unenforceable in whole or in part, the remaining provisions shall not be affected and shall continue to be valid and enforceable as though the invalid or unenforceable parts had not been included in this Agreement.&nbsp;</div>
+<div class='mt-4'>15. <strong>Assignment:</strong> Borrower shall not assign this Agreement, in whole or in part, without the written consent of Lender. Lender may assign all or any portion of this Agreement with written notice to Borrower.&nbsp;</div>
+<div class='mt-4'>16. <strong>Governing Law:</strong> This Agreement shall be governed by and construed in accordance with the laws of the Republic of Malawi, not including its conflicts of law provisions.&nbsp;</div>
+<div class='mt-4'>17. <strong>Disputes:</strong> Any dispute arising from this Agreement shall be resolved in the courts of the Republic of Malawi.&nbsp;</div>
+<div class='mt-4'>18. <strong>Entire Agreement:</strong> This Agreement contains the entire understanding between the parties and supersedes and cancels all prior agreements of the parties, whether oral or written, with respect to such subject matter.&nbsp;</div>
 <div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>"
             ;
     }
