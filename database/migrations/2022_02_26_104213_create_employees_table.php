@@ -27,6 +27,9 @@ class CreateEmployeesTable extends Migration
             $table->json('workAddress');
             $table->string('nationalId');
             $table->double('contractDuration');
+ 	    $table->string('bankName');
+            $table->string('bankAccountName');
+ 	    $table->string('bankAccountNumber');
             $table->integer('employer_id');
             $table->timestamps();
         });

@@ -17,7 +17,12 @@ class CreateEmployersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->string('address');
+            $table->string('physicalAddressName');
+            $table->string('physicalAddressBox');
+            $table->string('physicalAddressLocation');
+            $table->string('proxyName');
+            $table->string('proxyEmail');
+            $table->string('proxyPhoneNumber');
             $table->string('letter')->nullable();
             $table->timestamps();
         });
