@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="mt-2 text-gray-600">
-                            You can borrow MK5,000 to MK100,000 and pay back an interest of {{(contents.interest)*100}}% until your payday. Zachangu will charge MK{{contents.fee}} as bank transaction fee for all transactions made.
+                            You can borrow MK{{ contents.amountLimit.lower }} to MK{{contents.amountLimit.upper}} and pay back an interest of {{(contents.interest)*100}}% until your payday. Zachangu will charge MK{{contents.fee}} as bank transaction fee for all transactions made.
                         </div>
 
 
@@ -71,7 +71,7 @@
                         <div class="mt-2">
                             <!--                <jet-label for="amount" value="Enter Amount" />-->
                             <jet-input id="amount" type="email" class="mt-1 block w-full" v-model="amount" placeholder="Enter Amount" />
-                            <span class="text-xs text-gray-400">Between MK5,000 and MK100,000</span>
+                            <span class="text-xs text-gray-400">Between MK{{contents.amountLimit.lower}} and MK{{contents.amountLimit.upper}}</span>
                         </div>
 
                         <div class="ml-3">

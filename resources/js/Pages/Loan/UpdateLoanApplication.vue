@@ -181,7 +181,7 @@
                                     <div >
                                         <jet-label for="amount" value="Enter Amount" />
                                         <jet-input id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" />
-                                        <span class="text-xs text-gray-400">Between MK5,000 and MK100,000</span>
+                                        <span class="text-xs text-gray-400">Between MK{{contents.amountLimit.lower}} and MK{{contents.amountLimit.upper}}</span>
                                     </div>
 
                                     <div class="ml-3">
