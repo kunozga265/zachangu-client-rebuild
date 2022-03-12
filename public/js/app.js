@@ -4594,7 +4594,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     validation: function validation() {
-      return this.amount >= this.contents.amountLimit.lower && this.amount <= this.contents.amountLimit.upper;
+      return parseInt(this.amount) >= parseInt(this.contents.amountLimit.lower) && parseInt(this.amount) <= parseInt(this.contents.amountLimit.upper);
     },
     interest: function interest() {
       return Math.round(this.amount * this.contents.interest);
