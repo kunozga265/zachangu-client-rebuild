@@ -114,11 +114,11 @@
 
                 contents:{
                     amountLimit:{
-                        lower:5000,
-                        upper:100000,
+                        lower:this.$page.props.contents.lowerLimit,
+                        upper:this.$page.props.contents.upperLimit,
                     },
-                    fee:510,
-                    interest:0.1,
+                    fee:this.$page.props.contents.bankCharge,
+                    interest:this.$page.props.contents.interest,
                 },
                 errorMessage:'',
                 errorSection:'',

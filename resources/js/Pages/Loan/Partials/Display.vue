@@ -1,6 +1,26 @@
 <template>
 
     <div>
+        <div class="flex items-center justify-between flex-wrap" v-if="loan.progress==1 || loan.progress ==2">
+            <div class="w-0 flex-1 flex items-center min-w-0 bg-gray-600 p-6">
+                        <span class="flex p-2 rounded-lg bg-yellow-400">
+<!--                            <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>-->
+
+                            <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </span>
+
+                <p class="ml-3 font-medium text-sm text-white" v-if="loan.progress==1">
+                    Waiting for a guarantor to approve the loan. Copy and send the loan code to your prospective guarantor and they should log into their account and guarantee the loan.
+                </p>
+                <p class="ml-3 font-medium text-sm text-white" v-else>
+                    An email has been sent to your employer {{employer.proxyName}} to approve your status of employment with {{employer.name}}. You can follow up with {{employer.proxyName}} to speed up your approval process.
+                </p>
+            </div>
+        </div>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -181,12 +201,12 @@
                         <div class="mt-6">
                             <div class="flex items-center justify-start">
                                 <div class="mt-0 p-1 h-6 w-6 rounded-full text-white text-center text-xs bg-gray-800 ">3</div>
-                                <span class="text-xl ml-4">License Agreement</span>
+                                <span class="text-xl ml-4">Employee Loan Agreement</span>
                             </div>
                             <div class="mx-2 p-6  border-l-2 border-gray-200">
                                 <div class="">
                                     <div> <jet-button-secondary class="mt-4" @click.native="termsAndConditionsDialog=true">View File</jet-button-secondary></div>
-                                    <div class="mt-2 text-sm text-gray-600">Terms and Conditions File</div>
+                                    <div class="mt-2 text-sm text-gray-600">Loan Agreement File</div>
                                     <jet-dialog-modal :show="termsAndConditionsDialog" @close="closeModal">
                                         <template #title>
                                             Zachangu Microfinance Agency
@@ -227,6 +247,7 @@ export default {
         'contractDuration',
         'contractDurationEligibility',
         'termsAndConditions',
+        'employer'
     ],
     components:{
         JetButton,

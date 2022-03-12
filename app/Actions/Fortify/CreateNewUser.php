@@ -35,15 +35,15 @@ class CreateNewUser implements CreatesNewUsers
 
 
         $user = new User([
-            'firstName' => $input['firstName'],
-            'middleName' => $input['middleName'],
-            'lastName' => $input['lastName'],
+            'firstName' => ucwords($input['firstName']),
+            'middleName' => ucwords($input['middleName']),
+            'lastName' => ucwords($input['lastName']),
             'nationalId' => strtoupper($input['nationalId']),
 //            'employer_id' => $input['employerId'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'subscription'         => 0,
-            'address'         => $input['address']
+            'address'         => ucwords($input['address'])
         ]);
 
         $user->save();

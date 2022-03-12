@@ -50,12 +50,12 @@
                         <div class="mt-6">
                             <div class="flex items-center justify-start">
                                 <div class="mt-0 p-1 h-6 w-6 rounded-full text-white text-center text-xs bg-gray-800 ">3</div>
-                                <span class="text-xl ml-4">Terms and conditions</span>
+                                <span class="text-xl ml-4">Employee Loan Agreement</span>
                             </div>
                             <div class="mt-4 mx-2 p-6  border-l-2 border-gray-200">
 
                                 <input class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="checkbox" v-model="termsAndConditionsCheck"/>
-                                <span>I accept the terms in the <span class="cursor-pointer underline text-gray-600 hover:text-gray-900" @click="termsAndConditionsDialog=true">License Agreement</span></span>
+                                <span>I accept the terms in the <span class="cursor-pointer underline text-gray-600 hover:text-gray-900" @click="termsAndConditionsDialog=true">Loan Agreement</span></span>
 
                                 <jet-dialog-modal :show="termsAndConditionsDialog" @close="closeModal">
                                     <template #title>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,6 +46,21 @@ class HandleInertiaRequests extends Middleware
                     'success'=>$request->session()->get('success'),
                     'error'=>$request->session()->get('error'),
                 ];
+            },
+            'contents'=>function() use ($request){
+                $role=Role::where('name','admin')->first();
+                $user=$role->users()->first();
+
+                if (is_object($user)){
+                    return[
+                        'interest'=>$user->interest,
+                        'lowerLimit'=>$user->lowerLimit,
+                        'upperLimit'=>$user->upperLimit,
+                        'bankCharge'=>$user->bankCharge,
+                    ];
+                }else
+                    return null;
+
             }
         ]);
     }

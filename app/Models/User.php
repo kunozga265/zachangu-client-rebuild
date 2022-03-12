@@ -74,7 +74,10 @@ class User extends Authenticatable
         'access_token',
         'employer_id',
         'subscription',
-        'address'
+        'address',
+        'interest',
+        'lowerLimit',
+        'upperLimit',
     ];
 
     /**

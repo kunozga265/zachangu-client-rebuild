@@ -299,11 +299,11 @@
                 days:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
                 contents:{
                     amountLimit:{
-                        lower:5000,
-                        upper:100000,
+                        lower:this.$page.props.contents.lowerLimit,
+                        upper:this.$page.props.contents.upperLimit,
                     },
-                    fee:510,
-                    interest:0.1,
+                    fee:this.$page.props.contents.bankCharge,
+                    interest:this.$page.props.contents.interest,
                 },
                 errorMessage:'',
                 errorSection:'',

@@ -13,11 +13,13 @@
                     :contractDuration="contractDuration"
                     :contractDurationEligibility="contractDurationEligibility"
                     :termsAndConditions="termsAndConditions"
+
                 />
                 <display
                     v-else
                     :loan="loan"
                     :contractDuration="contractDuration"
+                    :employer="employer"
                 />
 
 
@@ -40,6 +42,7 @@ export default {
         'contractDuration',
         'contractDurationEligibility',
         'termsAndConditions',
+        'employer'
 
     ],
     components:{
