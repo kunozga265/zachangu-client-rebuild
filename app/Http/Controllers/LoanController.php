@@ -549,7 +549,7 @@ class LoanController extends Controller
 
         return "
 
-<div class='mt-4'><strong>Employer Agreement [01/00]</strong></div>
+<div class='mt-4'><strong>Employee Agreement [01/00]</strong></div>
 <div class='mt-4'><strong>Issued on: $issuedDate</strong></div>
 <div class='mt-4'>This Loan Agreement (this “Agreement”), is executed as of this <span class='underline font-bold'>$day</span> day of <span class='underline font-bold'>$month, $year</span> (the “Effective Date”)&nbsp;</div>
 <div class='mt-4'>By and between&nbsp;</div>

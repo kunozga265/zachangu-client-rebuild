@@ -23,10 +23,7 @@ class CreateUsersTable extends Migration
             $table->integer('employer_id')->nullable();
             $table->double('subscription')->nullable();
             $table->string('address')->nullable();
-            $table->float('interest')->nullable();
-            $table->double('lowerLimit')->nullable();
-            $table->double('upperLimit')->nullable();
-            $table->double('bankCharge')->nullable();
+            $table->json('contents')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

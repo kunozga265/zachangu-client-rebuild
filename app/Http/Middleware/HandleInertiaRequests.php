@@ -52,11 +52,12 @@ class HandleInertiaRequests extends Middleware
                 $user=$role->users()->first();
 
                 if (is_object($user)){
+                    $contents=json_decode($user->contents);
                     return[
-                        'interest'=>$user->interest,
-                        'lowerLimit'=>$user->lowerLimit,
-                        'upperLimit'=>$user->upperLimit,
-                        'bankCharge'=>$user->bankCharge,
+                        'interest'=>$contents->interest,
+                        'lowerLimit'=>$contents->lowerLimit,
+                        'upperLimit'=>$contents->upperLimit,
+                        'bankCharge'=>$contents->bankCharge,
                     ];
                 }else
                     return null;

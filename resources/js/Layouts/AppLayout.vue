@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div >
         <jet-banner />
 
         <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+            <nav style="z-index:999999" class=" fixed w-full bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -142,7 +142,7 @@
             </nav>
 
             <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
+            <header style="padding-top:64px;" class="bg-white shadow" v-if="$slots.header">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header"></slot>
                 </div>

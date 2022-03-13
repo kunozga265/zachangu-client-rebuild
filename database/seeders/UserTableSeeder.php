@@ -20,10 +20,12 @@ class UserTableSeeder extends Seeder
         $user=new User([
             'firstName' => "Admin",
             'lastName' => "User",
-            'interest' => 0.06,
-            'lowerLimit' => 5000,
-            'upperLimit' => 200000,
-            'bankCharge' => 510,
+            'contents' => json_encode([
+                'interest' => 0.06,
+                'lowerLimit' => 5000,
+                'upperLimit' => 200000,
+                'bankCharge' => 0.05
+            ]),
             'email' => "admin@zachanguloans.com",
             'password' => Hash::make("12345678"),
         ]);

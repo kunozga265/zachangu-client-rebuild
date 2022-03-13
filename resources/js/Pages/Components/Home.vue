@@ -6,13 +6,13 @@
                     <div class="p-12 sm:px-20 bg-white border-b border-gray-200">
 
                         <div>
-                            <inertia-link  :href="route('loan.new')">
+                            <inertia-link class="pl-0 p-2"  :href="route('loan.new')">
                                 <jet-button :disabled="loan!=null">
                                     Apply for loan
                                 </jet-button>
                             </inertia-link>
 
-                            <inertia-link class="ml-2" :href="route('guarantor')">
+                            <inertia-link class="p-2" :href="route('guarantor')">
                                 <jet-secondary-button>
                                     Guarantee Loan
                                 </jet-secondary-button>
@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="mt-2 text-gray-600">
-                            You can borrow MK{{ contents.amountLimit.lower }} to MK{{contents.amountLimit.upper}} and pay back an interest of {{(contents.interest)*100}}% until your payday. Zachangu will charge MK{{contents.fee}} as bank transaction fee for all transactions made.
+                            You can borrow MK{{ contents.amountLimit.lower }} to MK{{contents.amountLimit.upper}} and pay back an interest of {{Math.round((contents.interest)*100)}}% until your payday. Zachangu will charge {{Math.round((contents.fee)*100)}}% of the loan as processing fee.
                         </div>
 
 
@@ -76,18 +76,18 @@
 
                         <div class="ml-3">
                             <div class="mt-4">
-                                <div>MK{{ contents.fee }}</div>
-                                <div class="text-sm text-gray-600">Bank Sending Fee</div>
+                                <div>MK{{validation?processingFee:'0'}}</div>
+                                <div class="text-sm text-gray-600">Processing Fee</div>
                             </div>
                             <div class="mt-4">
                                 <div>MK{{validation?amountReceived:'0'}}</div>
                                 <div class="text-sm text-gray-600">Amount Received</div>
                             </div>
                             <jet-section-border />
-                            <div class="mt-4">
+<!--                            <div class="mt-4">
                                 <div>MK{{ contents.fee }}</div>
                                 <div class="text-sm text-gray-600">Bank Withdrawal Fee</div>
-                            </div>
+                            </div>-->
                             <div class="mt-4">
                                 <div>MK{{validation?interest:'0'}}</div>
                                 <div class="text-sm text-gray-600">Interest charged</div>
@@ -159,10 +159,13 @@
                 return Math.round(this.amount*this.contents.interest);
             },
             amountReceived:function () {
-                return Math.round(this.amount-this.contents.fee);
+                return Math.round(this.amount - this.processingFee);
             },
             amountToPay:function () {
-                return Math.round(this.amount *(this.contents.interest + 1) + this.contents.fee);
+                return Math.round(this.amount *(this.contents.interest + 1));
+            },
+            processingFee:function () {
+                return Math.round(this.amount * this.contents.fee);
             },
         },
         methods: {
@@ -172,10 +175,10 @@
                         return 'Finish the applying process';
                         break;
                     case '1':
-                        return 'Waiting for your guarantor to approve';
+                        return 'Waiting for guarantor to approve';
                         break;
                     case '2':
-                        return 'Waiting for your employer to approve';
+                        return 'Waiting for employer to approve';
                         break;
                     case '3':
                         return 'Active';
@@ -183,8 +186,17 @@
                     case '4':
                         return 'Closed';
                         break;
+                    case '5':
+                        return 'Defaulted';
+                        break;
+                    case '6':
+                        return 'Over Due';
+                        break;
+                    case '7':
+                        return 'Rejected';
+                        break;
                     default:
-                        return 'Nothing';
+                        return '-';
                         break;
                 }
             },
@@ -202,10 +214,8 @@
                     case '3':
                         return '#4ADE80';
                         break;
-                    case '4':
-                        return '#EF4444';
-                        break;
                     default:
+                        return '#EF4444';
                         break;
                 }
             },

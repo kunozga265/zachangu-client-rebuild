@@ -30,20 +30,18 @@
 
                                     <div class="ml-3">
                                         <div class="mt-4">
-                                            <div>MK{{ contents.fee }}</div>
-                                            <div class="text-sm text-gray-600">Bank Sending Fee</div>
+                                            <div>MK{{amountValidation?processingFee:'0'}}</div>
+                                            <div class="text-sm text-gray-600">Processing Fee</div>
                                         </div>
                                         <div class="mt-4">
                                             <div>MK{{amountValidation?amountReceived:'0'}}</div>
                                             <div class="text-sm text-gray-600">Amount Received</div>
                                         </div>
-
-                                         <jet-section-border />
-
-                                        <div class="mt-4">
-                                            <div>MK{{ contents.fee }}</div>
-                                            <div class="text-sm text-gray-600">Bank Withdrawal Fee</div>
-                                        </div>
+                                        <jet-section-border />
+                                        <!--                            <div class="mt-4">
+                                                                        <div>MK{{ contents.fee }}</div>
+                                                                        <div class="text-sm text-gray-600">Bank Withdrawal Fee</div>
+                                                                    </div>-->
                                         <div class="mt-4">
                                             <div>MK{{amountValidation?interest:'0'}}</div>
                                             <div class="text-sm text-gray-600">Interest charged</div>
@@ -145,10 +143,13 @@
                 return Math.round(this.form.amount*this.contents.interest);
             },
             amountReceived:function () {
-                return Math.round(this.form.amount-this.contents.fee);
+                return Math.round(this.form.amount - this.processingFee);
             },
             amountToPay:function () {
-                return Math.round(this.form.amount *(this.contents.interest + 1) + this.contents.fee);
+                return Math.round(this.form.amount *(this.contents.interest + 1));
+            },
+            processingFee:function () {
+                return Math.round(this.form.amount * this.contents.fee);
             },
         },
 

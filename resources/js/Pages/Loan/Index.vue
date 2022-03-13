@@ -78,8 +78,17 @@ export default {
                 case '4':
                     return 'Closed';
                     break;
+                case '5':
+                    return 'Defaulted';
+                    break;
+                case '6':
+                    return 'Over Due';
+                    break;
+                case '7':
+                    return 'Rejected';
+                    break;
                 default:
-                    return 'Nothing';
+                    return '-';
                     break;
             }
         },
@@ -97,10 +106,8 @@ export default {
                 case '3':
                     return '#4ADE80';
                     break;
-                case '4':
-                    return '#EF4444';
-                    break;
                 default:
+                    return '#EF4444';
                     break;
             }
         },
