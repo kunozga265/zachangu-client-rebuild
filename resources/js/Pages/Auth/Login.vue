@@ -6,7 +6,7 @@
 
         <template #heading>
             <p class="text-xl font-bold text-center">Welcome to Zachangu online loans</p>
-            <p class="text-center">A platform that allows individuals with formal employment access to quick payday loans of interest up to {{Math.round(($page.props.contents.interest)*100)}}%</p>
+            <p class="text-center">A platform that allows individuals with formal employment access to quick payday loans of interest up to {{(($page.props.contents.interest)*100).toFixed(1)}}%</p>
         </template>
 
         <jet-validation-errors class="mb-4" />

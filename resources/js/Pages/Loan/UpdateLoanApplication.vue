@@ -245,7 +245,7 @@
                                                         v-for="(summary,index) in loanSummary"
                                                         :key="index"
                                                     >
-                                                        <td class="text-center text-xs sm:text-sm md:text-base">{{ summary.month }}</td>
+                                                        <td class="text-center text-xs sm:text-sm md:text-base">{{ computeDay(summary.month) }}</td>
                                                         <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.openingBalance }}</td>
                                                         <!--                                                <td class="text-right text-xs sm:text-sm md:text-base invisible md:visible">{{ summary.monthlyPayment }}</td>-->
                                                         <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.principal }}</td>
@@ -499,10 +499,10 @@
                 return (parseFloat(this.amountToPay)-this.form.amount).toFixed(2);
             },
             amountReceived:function () {
-                return (this.monthlyPayment * parseInt(this.selectedMonth)).toFixed(2);
+                return Math.round(this.form.amount - this.processingFee);
             },
             amountToPay:function () {
-                return Math.round(this.form.amount *(this.contents.interest + 1));
+                return (this.monthlyPayment * parseInt(this.selectedMonth)).toFixed(2);
             },
             processingFee:function () {
                 return Math.round(this.form.amount * this.contents.fee);
@@ -624,6 +624,24 @@
                         })
                     };
                 }
+            },
+            computeDay(payDay){
+                let day=''
+                switch(payDay){
+                    case 1:
+                        day='st';
+                        break;
+                    case 2:
+                        day= 'nd';
+                        break;
+                    case 3:
+                        day='rd';
+                        break;
+                    default:
+                        day='th';
+                        break;
+                }
+                return payDay + day;
             },
         }
 

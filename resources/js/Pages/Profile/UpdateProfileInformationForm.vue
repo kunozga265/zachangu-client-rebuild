@@ -61,9 +61,9 @@
             </div>
 
 
-            <div v-if="$page.props.user.employer_id == null" class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4">
                 <jet-label for="nationalId" value="National Id" />
-                <jet-input id="nationalId" type="text" class="mt-1 block w-full" v-model="form.nationalId" autocomplete="nationalId" />
+                <jet-input id="nationalId" type="text" class="mt-1 block w-full" v-model="form.nationalId" autocomplete="nationalId" :disabled="$page.props.user.employer_id != null"/>
                 <jet-input-error :message="form.errors.nationalId" class="mt-2" />
             </div>
 

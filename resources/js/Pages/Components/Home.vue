@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="mt-2 text-gray-600">
-                            You can borrow MK{{ contents.amountLimit.lower }} to MK{{contents.amountLimit.upper}} and pay back an interest of {{((contents.interest)*100).toFixed(1)}}% until your payday. Zachangu will charge {{Math.round((contents.fee)*100)}}% of the loan as processing fee.
+                            You can borrow MK{{ contents.amountLimit.lower }} to MK{{contents.amountLimit.upper}} and pay back an interest of {{((contents.interest)*100).toFixed(1)}}%. Zachangu will charge {{Math.round((contents.fee)*100)}}% of the loan as processing fee.
                         </div>
 
 
@@ -116,7 +116,7 @@
                                     <table class="w-full table-fixed">
                                         <thead>
                                             <tr class="border-gray-400 border-b">
-                                                <th class="text-center text-xs sm:text-sm md:text-base">Month</th>
+                                                <th class="text-center text-xs sm:text-sm md:text-base">Payments</th>
                                                 <th class="text-right text-xs sm:text-sm md:text-base">Opening Balance</th>
 <!--                                                <th class="text-right text-xs sm:text-sm md:text-base invisible md:visible">Monthly Payment</th>-->
                                                 <th class="text-right text-xs sm:text-sm md:text-base">Principal</th>
@@ -129,7 +129,7 @@
                                                 v-for="(summary,index) in loanSummary"
                                                 :key="index"
                                             >
-                                                <td class="text-center text-xs sm:text-sm md:text-base">{{ summary.month }}</td>
+                                                <td class="text-center text-xs sm:text-sm md:text-base">{{ computeDay(summary.month) }}</td>
                                                 <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.openingBalance }}</td>
 <!--                                                <td class="text-right text-xs sm:text-sm md:text-base invisible md:visible">{{ summary.monthlyPayment }}</td>-->
                                                 <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.principal }}</td>
@@ -298,6 +298,24 @@
                         return '#EF4444';
                         break;
                 }
+            },
+            computeDay(payDay){
+                let day=''
+                switch(payDay){
+                    case 1:
+                        day='st';
+                        break;
+                    case 2:
+                        day= 'nd';
+                        break;
+                    case 3:
+                        day='rd';
+                        break;
+                    default:
+                        day='th';
+                        break;
+                }
+                return payDay + day;
             },
 
         }
