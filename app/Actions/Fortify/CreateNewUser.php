@@ -42,7 +42,7 @@ class CreateNewUser implements CreatesNewUsers
 //            'employer_id' => $input['employerId'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'subscription'         => 0,
+//            'subscription'         => 0,
             'address'         => ucwords($input['address'])
         ]);
 
