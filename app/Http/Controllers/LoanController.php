@@ -103,6 +103,8 @@ class LoanController extends Controller
 
         if (is_object($loan)) {
 
+            $dueDate=$loan->dueDate;
+            $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
             $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
             $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
             $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
@@ -113,7 +115,7 @@ class LoanController extends Controller
             $employee=Employee::where('nationalId',$loan->nationalId)->first();
 
             return Inertia::render('Loan/Show', [
-                'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$loan->dueDate,$employee),
+                'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$dueDate,$employee),
                 'loan' => $loan,
                 'contractDuration'=>$contractDuration,
                 'contractDurationDate'  => date('jS F, Y',$contractDuration),
@@ -603,6 +605,9 @@ class LoanController extends Controller
             $_dueDate->addMonth();
 
         }
+        $macAddress=exec('getmac');
+        $ipAddress=\Request::ip();
+        $signatureTime=Carbon::now()->toDateTimeString();
 
 
         return "
@@ -619,7 +624,7 @@ class LoanController extends Controller
 <div class='mt-4'>The parties agree as follows:&nbsp;</div>
 <div class='mt-4'>1. <strong>Loan Amount</strong>: The Lender agrees to loan the Employee the principal sum of <span class='underline font-bold'>MK$loan->amount</span> (Not more than MK200,000.00).&nbsp;</div>
 <div class='mt-4'>2. <strong>Transfer</strong>: Funds will be transferred by the lender to account number <span class='underline font-bold'>$employee->bankAccountNumber</span> held by <span class='underline font-bold'>$employee->bankName</span>  under the name <span class='underline font-bold'>$employee->bankAccountName </span> </div>
-<div class='mt-4'>3. <strong>Interest:</strong> The payday loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$dueDate</span></div>
+<div class='mt-4'>3. <strong>Interest:</strong> The loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$dueDate</span></div>
 <div class='mt-4'>Calculations are as follows:&nbsp;</div>
  <table class='my-4 w-full table-fixed'>
     <thead>
@@ -650,7 +655,8 @@ class LoanController extends Controller
 <div class='mt-4'>15. <strong>Governing Law:</strong> This Agreement shall be governed by and construed in accordance with the laws of the Republic of Malawi, not including its conflicts of law provisions.&nbsp;</div>
 <div class='mt-4'>16. <strong>Disputes:</strong> Any dispute arising from this Agreement shall be resolved in the courts of the Republic of Malawi.&nbsp;</div>
 <div class='mt-4'>17. <strong>Entire Agreement:</strong> This Agreement contains the entire understanding between the parties and supersedes and cancels all prior agreements of the parties, whether oral or written, with respect to such subject matter.&nbsp;</div>
-<div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>"
+<div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>
+<div class='mt-6'>Signed: [Mac Address:$macAddress, IP Address:$ipAddress, Time:$signatureTime]</div>"
             ;
     }
 
