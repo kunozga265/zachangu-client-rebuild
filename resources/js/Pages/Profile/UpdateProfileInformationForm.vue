@@ -49,7 +49,7 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="middleName" value="Last Name" />
+                <jet-label for="middleName" value="Middle Name" />
                 <jet-input id="middleName" type="text" class="mt-1 block w-full" v-model="form.middleName" autocomplete="middle-name" />
                 <jet-input-error :message="form.errors.middleName" class="mt-2" />
             </div>
@@ -58,6 +58,13 @@
                 <jet-label for="lastName" value="Last Name" />
                 <jet-input id="lastName" type="text" class="mt-1 block w-full" v-model="form.lastName" autocomplete="last-name" />
                 <jet-input-error :message="form.errors.lastName" class="mt-2" />
+            </div>
+
+
+            <div v-if="$page.props.user.employer_id == null" class="col-span-6 sm:col-span-4">
+                <jet-label for="nationalId" value="National Id" />
+                <jet-input id="nationalId" type="text" class="mt-1 block w-full" v-model="form.nationalId" autocomplete="nationalId" />
+                <jet-input-error :message="form.errors.nationalId" class="mt-2" />
             </div>
 
             <!-- Email -->
@@ -70,7 +77,7 @@
 
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="address" value="Address" />
-                <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" autocomplete="middle-name" />
+                <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" autocomplete="address" />
                 <jet-input-error :message="form.errors.address" class="mt-2" />
             </div>
 
@@ -119,6 +126,7 @@
                     lastName: this.user.lastName,
                     email: this.user.email,
                     address: this.user.address,
+                    nationalId: this.user.nationalId,
                     photo: null,
                 }),
 

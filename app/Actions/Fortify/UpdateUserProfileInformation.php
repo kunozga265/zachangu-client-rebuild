@@ -22,6 +22,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'firstName' => ['required', 'string', 'max:255'],
             'lastName' => ['required', 'string', 'max:255'],
             'address' => ['required'],
+            'nationalId' => ['required','min:8'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'image', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
@@ -39,7 +40,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'firstName'     => $input['firstName'],
                 'middleName'    => $input['middleName'],
                 'lastName'      => $input['lastName'],
-                'address'       => $input['address']
+                'address'       => $input['address'],
+                'nationalId'    => strtoupper($input['nationalId'])
             ])->save();
         }
     }
