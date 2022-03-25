@@ -39,7 +39,7 @@
                                 <!--Valid greater than 3 months-->
                                 <div v-if="contractDurationEligibility" class="mt-4 text-gray-600"> Your current contract expires in {{computeHumanReadable(contractDuration)}}.</div>
                                 <!--Less than 3 months-->
-                                <div v-else class="mt-4 text-gray-600"> Your current contract is invalid. It has or will expire in less than 3 months.</div>
+                                <div v-else class="mt-4 text-gray-600"> Your current contract is invalid. It has or will expire in less than 6 months.</div>
 
 <!--                                <div class="mt-6 text-2xl text-gray-800 font-semibold">Subscription</div>-->
 <!--                                <div class="mt-4 text-gray-600">  You are subscribed until  {{computeHumanReadable($page.props.user.subscription)}} from now. You are able to apply for loans without filling the entire form.</div>-->

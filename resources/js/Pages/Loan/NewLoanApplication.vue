@@ -165,6 +165,10 @@
                                             <jet-label for="paySlipFile" value="Upload your pay slip" />
                                             <input type="file" @input="paySlipUpload($event.target.files[0])" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"/>
                                         </div>
+                                        <div class="mt-4">
+                                            <jet-label for="net" value="Net Pay" />
+                                            <jet-input id="net" type="text" class="mt-1 block w-full" v-model="form.net" required />
+                                        </div>
                                     </div>
 
                                 </div>
@@ -178,33 +182,79 @@
                                 </div>
                                 <div class="mt-4 mx-2 p-6  border-l-2 border-gray-200">
 
-                                    <div >
-                                        <jet-label for="amount" value="Enter Amount" />
-                                        <jet-input id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" />
-                                        <span class="text-xs text-gray-400">Between MK{{contents.amountLimit.lower}} and MK{{contents.amountLimit.upper}}</span>
+                                    <div class="mt-6 text-gray-600">
+                                        Enter amount
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3">
+                                        <div class="mt-2 md:col-span-2">
+                                            <!--                <jet-label for="amount" value="Enter Amount" />-->
+                                            <jet-input id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" placeholder="Enter Amount" />
+                                            <span class="text-xs text-gray-400">Enter amount between MK{{contents.amountLimit.lower}} and MK{{contents.amountLimit.upper}}</span>
+                                        </div>
+                                        <div class="mt-2 md:ml-2">
+                                            <select class="w-full mt-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" v-model="selectedMonth">
+                                                <option
+                                                    v-for="index in monthsRange"
+                                                    :key="index"
+                                                >{{ index }}</option>
+                                            </select>
+                                            <span class="text-xs text-gray-400">Select Number of months to repay loan</span>
+                                        </div>
                                     </div>
 
-                                    <div class="ml-3">
-                                        <div class="mt-4">
-                                            <div>MK{{amountValidation?processingFee:'0'}}</div>
-                                            <div class="text-sm text-gray-600">Processing Fee</div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <div>MK{{amountValidation?amountReceived:'0'}}</div>
-                                            <div class="text-sm text-gray-600">Amount Received</div>
+                                    <div class="mt-4">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                                            <div class="mt-4">
+                                                <div>MK{{amountValidation?processingFee:'0'}}</div>
+                                                <div class="text-sm text-gray-600">Processing Fee</div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <div>MK{{amountValidation?amountReceived:'0'}}</div>
+                                                <div class="text-sm text-gray-600">Amount Received</div>
+                                            </div>
                                         </div>
                                         <jet-section-border />
-                                        <!--                            <div class="mt-4">
-                                                                        <div>MK{{ contents.fee }}</div>
-                                                                        <div class="text-sm text-gray-600">Bank Withdrawal Fee</div>
-                                                                    </div>-->
-                                        <div class="mt-4">
-                                            <div>MK{{amountValidation?interest:'0'}}</div>
-                                            <div class="text-sm text-gray-600">Interest charged</div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <div>MK{{amountValidation?amountToPay:'0'}}</div>
-                                            <div class="text-sm text-gray-600">Amount to pay back</div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                                            <div class="mt-4">
+                                                <div>MK{{amountValidation?monthlyPayment.toFixed(2):'0'}}</div>
+                                                <div class="text-sm text-gray-600">Monthly Payment</div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <div>MK{{amountValidation?interest:'0'}}</div>
+                                                <div class="text-sm text-gray-600">Total interest charged</div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <div>MK{{amountValidation?amountToPay:'0'}}</div>
+                                                <div class="text-sm text-gray-600">Amount to pay back</div>
+                                            </div>
+                                            <div class="mt-8 sm:col-span-2 md:col-span-3" v-if="amountValidation">
+                                                <table class="w-full table-fixed">
+                                                    <thead>
+                                                    <tr class="border-gray-400 border-b">
+                                                        <th class="text-center text-xs sm:text-sm md:text-base">Month</th>
+                                                        <th class="text-right text-xs sm:text-sm md:text-base">Opening Balance</th>
+<!--                                                        <th class="text-right text-xs sm:text-sm md:text-base invisible md:visible">Monthly Payment</th>-->
+                                                        <th class="text-right text-xs sm:text-sm md:text-base">Principal</th>
+                                                        <th class="text-right text-xs sm:text-sm md:text-base">Interest</th>
+                                                        <th class="text-right text-xs sm:text-sm md:text-base">Closing Balance</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="mt-2">
+                                                    <tr
+                                                        v-for="(summary,index) in loanSummary"
+                                                        :key="index"
+                                                    >
+                                                        <td class="text-center text-xs sm:text-sm md:text-base">{{ summary.month }}</td>
+                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.openingBalance }}</td>
+                                                        <!--                                                <td class="text-right text-xs sm:text-sm md:text-base invisible md:visible">{{ summary.monthlyPayment }}</td>-->
+                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.principal }}</td>
+                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.interest }}</td>
+                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.closingBalance }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -281,9 +331,11 @@
                     contractFile:'',
                     payDay:null,
                     paySlipFile:'',
+                    net:'',
 
                     //Amount
                     amount:'',
+                    payments:'',
 
                     user_id:''
                 }),
@@ -305,6 +357,8 @@
                 },
                 errorMessage:'',
                 errorSection:'',
+                monthsRange:6,
+                selectedMonth:1
             }
         },
         created(){
@@ -383,9 +437,19 @@
                     this.errorMessage='Upload your pay slip';
                     return false;
                 }
-                else if(this.amount===null || !(this.amountValidation) ){
+                else if(this.form.net===''){
+                    this.errorSection='Workplace Information';
+                    this.errorMessage='Enter your net pay';
+                    return false;
+                }
+                else if(this.form.amount===null || !(this.amountValidation) ){
                     this.errorSection='Amount';
                     this.errorMessage='Enter an amount';
+                    return false;
+                }
+                else if(this.monthlyPayment > parseFloat(this.form.net)/2 ){
+                    this.errorSection='Amount';
+                    this.errorMessage='Your monthly payment cannot be more than half your net pay';
                     return false;
                 }
                 else
@@ -406,19 +470,47 @@
                 return (new Date(this.today).getTime())/1000
             },
             amountValidation:function () {
-                return (this.form.amount>=this.contents.amountLimit.lower && this.form.amount<=this.contents.amountLimit.upper);
+                return (parseInt(this.form.amount)>=this.contents.amountLimit.lower && parseInt(this.form.amount)<=this.contents.amountLimit.upper);
             },
             interest:function () {
-                return Math.round(this.form.amount*this.contents.interest);
+                return (parseFloat(this.amountToPay)-this.form.amount).toFixed(2);
             },
             amountReceived:function () {
-                return Math.round(this.form.amount - this.processingFee);
+                return (this.monthlyPayment * parseInt(this.selectedMonth)).toFixed(2);
             },
             amountToPay:function () {
                 return Math.round(this.form.amount *(this.contents.interest + 1));
             },
             processingFee:function () {
                 return Math.round(this.form.amount * this.contents.fee);
+            },
+            monthlyPayment:function(){
+                let num=(this.contents.interest * Math.pow((1 + this.contents.interest),parseInt(this.selectedMonth)))
+                let den=(Math.pow((1 + this.contents.interest),parseInt(this.selectedMonth)) - 1)
+                return this.form.amount * num/den
+            },
+            loanSummary:function(){
+                let summary=[]
+                let openingBalance=0.0
+                let interest=0
+                let balance=this.form.amount
+
+                for(let iteration=1;iteration<=parseInt(this.selectedMonth); iteration++){
+                    openingBalance=balance
+                    interest=balance*this.contents.interest
+                    balance=(balance*(1+this.contents.interest))-this.monthlyPayment
+
+                    summary.push({
+                        month:iteration,
+                        openingBalance:parseFloat(openingBalance).toFixed(2),
+                        monthlyPayment:(this.monthlyPayment).toFixed(2),
+                        principal:(this.monthlyPayment-interest).toFixed(2),
+                        interest:(interest).toFixed(2),
+                        closingBalance:Math.abs((balance).toFixed(2))
+                    })
+                }
+
+                return summary
             },
         },
 
@@ -437,7 +529,8 @@
                             box:this.workAddressBox,
                             location:this.workAddressLocation,
                         },
-                        contractDuration: this.duration
+                        contractDuration: this.duration,
+                        payments: this.selectedMonth,
                     }))
                     .post(this.route('loan.store'), {
                         onFinish: () => this.form.reset('password'),

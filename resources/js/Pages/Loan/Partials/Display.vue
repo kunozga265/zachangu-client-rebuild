@@ -192,6 +192,10 @@
                                         <a :href="url(loan.paySlip)" target="_blank"> <jet-button-secondary>View File</jet-button-secondary></a>
                                         <div class="mt-2 text-sm text-gray-400">Pay Slip File</div>
                                     </div>
+                                    <div class="mt-4 ">
+                                        <div>MK{{loan.net}}</div>
+                                        <div class="text-sm text-gray-400">Net Pay</div>
+                                    </div>
                                 </div>
 
                             </div>

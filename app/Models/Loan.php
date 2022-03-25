@@ -33,6 +33,7 @@ class Loan extends Model
         'paySlip',
         'gross',
         'net',
+        'payments',
 
         'nationalIdFile',
 //        'passport_id',

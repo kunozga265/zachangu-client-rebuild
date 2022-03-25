@@ -35,7 +35,7 @@ class CreateLoansTable extends Migration
             $table->double('net')->nullable();
             $table->string('contract')->nullable();
             $table->string('paySlip')->nullable();
-//            $table->string('referenceLetter')->nullable();
+            $table->integer('payments')->nullable();
 //            $table->json('co_workers')->nullable();
 
 

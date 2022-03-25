@@ -52,12 +52,7 @@ class LoanController extends Controller
                 'loans' => $loans,
                 'role'=>$role
             ]);
-
         }
-
-
-
-
     }
 
     public function show($code)
@@ -91,9 +86,9 @@ class LoanController extends Controller
                 }
                 else{
                     //eligible if the contract date is equal or greater than 3 months
-                    if($diff->m >= 3) {
+                    if($diff->m >= 6) {
                         $contractDurationEligibility = true;
-                    //eligible if contract expires within 3 months
+                    //eligible if contract expires within 6 months
                     }else{
                         $contractDurationEligibility=false;
                     }
@@ -108,10 +103,7 @@ class LoanController extends Controller
 
         if (is_object($loan)) {
 
-
-
             $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
-            $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
             $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
             $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
             $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
@@ -136,17 +128,20 @@ class LoanController extends Controller
 
     public function create()
     {
+        return Inertia::render('Loan/NewLoanApplication');
+        /*
+         * Subscription disabled
         $user=User::find(Auth::id());
 
         $today=Carbon::today();
-
         //subscribed
         if($user->subscription != 0 && $today->getTimestamp() <= $user->subscription){
             return Inertia::render('Loan/NewSubscribedLoanApplication');
 
         //Not Subscribed
         }else
-            return Inertia::render('Loan/NewLoanApplication');
+        */
+
     }
 
     public function store(Request $request)
@@ -164,25 +159,17 @@ class LoanController extends Controller
             'nationalId'           => ['required','min:8','max:8'],
             'contractDuration'     => ['required'],
             'payDay'               => ['required'],
-            'paySlipFile'              => ['required'],
+            'paySlipFile'          => ['required'],
             'nationalIdFile'       => ['required'],
             'contractFile'         => ['required'],
-//            'consent'              => ['required'],
+            'net'                  => ['required'],
+            'payments'             => ['required'],
 //            'termsAndConditions'   => ['required'],
             'amount'               => ['required'],
         ])->validate();
 
         if($this->currentLoansCount()){
-            //Calculate due date which is the next pay day
-            $today=Carbon::now();
-            $dueDate=Carbon::createFromDate(null,null,$request->payDay);
 
-            $diff=$dueDate->diff($today);
-
-            //due date is behind
-            if($diff->invert == 0) {
-                $dueDate->addMonth();
-            }
 
             $loan = new Loan([
                 'code'                 => Carbon::now()->getTimestamp(), //generate code
@@ -204,7 +191,9 @@ class LoanController extends Controller
                 'contract'             => $request->contractFile,
                 'progress'             => 0,
                 'amount'               => $request->amount,
-                'dueDate'              => $dueDate->getTimestamp(),
+                'net'                  => $request->net,
+                'payments'             => $request->payments,
+                'dueDate'              => $this->calculateDueDate($request->payDay,$request->payments),
                 'user_id'              => Auth::id(),
             ]);
 
@@ -334,10 +323,11 @@ class LoanController extends Controller
             'nationalId'           => ['required','min:8','max:8'],
             'contractDuration'     => ['required'],
             'payDay'               => ['required'],
-            'paySlipFile'              => ['required'],
+            'paySlipFile'          => ['required'],
             'nationalIdFile'       => ['required'],
             'contractFile'         => ['required'],
-//            'consent'              => ['required'],
+            'net'                  => ['required'],
+            'payments'             => ['required'],
 //            'termsAndConditions'   => ['required'],
             'amount'               => ['required'],
         ])->validate();
@@ -363,6 +353,9 @@ class LoanController extends Controller
                 'nationalIdFile'    => $request->nationalIdFile,
                 'contract'          => $request->contractFile,
                 'amount'            => $request->amount,
+                'net'               => $request->net,
+                'payments'          => $request->payments,
+                'dueDate'           => $this->calculateDueDate($request->payDay,$request->payments),
             ]);
 
             //Update Score
@@ -376,6 +369,25 @@ class LoanController extends Controller
             return Redirect::back()->with('error','Invalid loan.');
     }
 
+    private function calculateDueDate($payDay,$payments)
+    {
+        //Calculate due date which is the next pay day
+        $today=Carbon::now();
+        $dueDate=Carbon::createFromDate(null,null,$payDay);
+
+        $diff=$dueDate->diff($today);
+
+        //due date is behind
+        if($diff->invert == 0) {
+            $dueDate->addMonth();
+        }
+
+        $dueDate->addMonths($payments);
+
+        return $dueDate->getTimestamp();
+
+    }
+
     public function apply(Request $request,$code){
         $user=User::find(Auth::id());
         $loan=$user->loans()->where('code',$code)->first();
@@ -384,14 +396,16 @@ class LoanController extends Controller
  	    $employee=Employee::where('nationalId',$loan->nationalId)->first();
             $loan->update([
                 'progress' => 1,
-                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),date('jS F, Y',$loan->dueDate),$employee),
+                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),$loan->dueDate,$employee),
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
 
+            /*
+            * Subscription Disabled
             //subscribe for the next three months
             $user->update([
                 'subscription'=>Carbon::today()->addMonth(3)->getTimestamp()
-            ]);
+            ]);*/
 
 
             return Redirect::route('loan.show',['code'=>$loan->code]);
@@ -544,7 +558,51 @@ class LoanController extends Controller
 
         $role=Role::where('name','admin')->first();
         $user=$role->users()->first();
-        $interest=($user->interest)*100;
+        $contents=json_decode($user->contents);
+        $interest=($contents->interest)*100;
+
+        //dates
+        $_dueDate=Carbon::createFromTimestamp($dueDate)->subMonths($loan->payments);
+        $dueDate=date('jS F, Y',$dueDate);
+
+        //make calculations
+        $loanSummary="";
+        $balance=$loan->amount;
+
+        $num=$contents->interest*pow((1+$contents->interest),$loan->payments);
+        $den=pow((1+$contents->interest),$loan->payments)-1;
+        $monthlyPayment=$loan->amount*($num/$den);
+
+
+
+
+        for($payment=1; $payment<=$loan->payments;$payment++){
+            $openingBalance=$balance;
+            $monthlyInterest=$balance*$contents->interest;
+            $balance=floatval($balance*(1+$contents->interest))-floatval($monthlyPayment);
+            $principal=floatval($monthlyPayment)-floatval($monthlyInterest);
+
+            $_openingBalance=number_format($openingBalance,2);
+            $_monthlyPayment=number_format($monthlyPayment,2);
+            $_monthlyInterest=number_format($monthlyInterest,2);
+            $_balance=number_format($balance,2);
+            $_principal=number_format($principal,2);
+
+            $calculatedDueDate=date('Y-m-d',$_dueDate->getTimestamp());
+
+            $loanSummary .=
+                "<tr>
+                    <td class='text-center text-xs sm:text-sm md:text-base'>$calculatedDueDate</td>
+                    <td class='text-right text-xs sm:text-sm md:text-base'>$_openingBalance</td>
+                    <td class='text-right text-xs sm:text-sm md:text-base'>$_monthlyPayment</td>
+                    <td class='text-right text-xs sm:text-sm md:text-base'>$_principal</td>
+                    <td class='text-right text-xs sm:text-sm md:text-base'>$_monthlyInterest</td>
+                    <td class='text-right text-xs sm:text-sm md:text-base'>$_balance</td>
+                </tr>";
+
+            $_dueDate->addMonth();
+
+        }
 
 
         return "
@@ -563,6 +621,21 @@ class LoanController extends Controller
 <div class='mt-4'>2. <strong>Transfer</strong>: Funds will be transferred by the lender to account number <span class='underline font-bold'>$employee->bankAccountNumber</span> held by <span class='underline font-bold'>$employee->bankName</span>  under the name <span class='underline font-bold'>$employee->bankAccountName </span> </div>
 <div class='mt-4'>3. <strong>Interest:</strong> The payday loan bears interest at the rate of <span class='underline font-bold'>$interest%</span> till the Employee’s day of receiving salary: <span class='underline font-bold'>$dueDate</span></div>
 <div class='mt-4'>Calculations are as follows:&nbsp;</div>
+ <table class='my-4 w-full table-fixed'>
+    <thead>
+    <tr class='border-gray-400 border-b'>
+        <th class='text-center text-xs sm:text-sm md:text-base'>Payment Date</th>
+        <th class='text-right text-xs sm:text-sm md:text-base'>Opening Balance</th>
+        <th class='text-right text-xs sm:text-sm md:text-base'>Monthly Payment</th>
+        <th class='text-right text-xs sm:text-sm md:text-base'>Principal</th>
+        <th class='text-right text-xs sm:text-sm md:text-base'>Interest</th>
+        <th class='text-right text-xs sm:text-sm md:text-base'>Closing Balance</th>
+    </tr>
+    </thead>
+    <tbody class='mt-2'>
+        $loanSummary
+    </body>
+</table>
 <div class='mt-4'>4. <strong>Repayment of Loan</strong>: The Loan, together with accrued and unpaid interest and all other charges, costs and expenses, is due and payable on or before <span class='underline font-bold'>$dueDate</span>.&nbsp;</div>
 <div class='mt-4'>5. <strong>Penalty:</strong> Where the employer fails to honor the date of repayment for the loan, he/she will be given three days as grace period. If the Borrower fails to pay within the grace period of three days, after the three days, each day the borrower agrees to pay 10% of the due payment till payment is made. The Borrower will also pay to the Lender all charges the Lender met to collect the overdue payment.&nbsp;</div>
 <div class='mt-4'>6. <strong>Prepayment:</strong> The Borrower has the right to prepay all or any part of the Loan, together with accrued and unpaid interest thereon, at any time without prepayment penalty or premium of any kind.&nbsp;</div>
