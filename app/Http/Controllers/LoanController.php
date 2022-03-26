@@ -600,12 +600,12 @@ class LoanController extends Controller
 
             $loanSummary .=
                 "<tr>
-                    <td class='text-center text-xs sm:text-sm md:text-base'>$calculatedDueDate</td>
-                    <td class='text-right text-xs sm:text-sm md:text-base'>$_openingBalance</td>
-                    <td class='text-right text-xs sm:text-sm md:text-base'>$_monthlyPayment</td>
-                    <td class='text-right text-xs sm:text-sm md:text-base'>$_principal</td>
-                    <td class='text-right text-xs sm:text-sm md:text-base'>$_monthlyInterest</td>
-                    <td class='text-right text-xs sm:text-sm md:text-base'>$_balance</td>
+                    <td class='text-center text-tiny sm:text-xs md:text-sm lg:text-base'>$calculatedDueDate</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_openingBalance</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyPayment</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_principal</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyInterest</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_balance</td>
                 </tr>";
 
             $_dueDate->addMonth();
