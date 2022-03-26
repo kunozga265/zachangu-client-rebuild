@@ -9,9 +9,13 @@ module.exports = {
     ],
 
     theme: {
+
         extend: {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+            },
+            fontSize:{
+                'tiny':'0.5rem'
             },
         },
     },

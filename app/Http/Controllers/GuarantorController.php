@@ -57,10 +57,14 @@ class GuarantorController extends Controller
         if (is_object($loan)) {
             $user=User::find(Auth::id());
 
+            $ipAddress=\Request::ip();
+            $signatureTime=Carbon::now()->toDateTimeString();
+            $signature="Signature: [$request->browserInfo, Ip Address: $ipAddress, Time: $signatureTime]";
+
             $loan->update([
                 'progress' => 2,
                 'guarantor_id' => Auth::id(),
-                'termsAndConditionsGuarantor' => $this->termsAndConditions($loan,$user->address,date('jS F, Y',$loan->dueDate)),
+                'termsAndConditionsGuarantor' => $this->termsAndConditions($loan,$user->address,date('jS F, Y',$loan->dueDate),$signature),
                 'guarantorDate'=>Carbon::now()->getTimestamp()
             ]);
 
@@ -98,7 +102,7 @@ class GuarantorController extends Controller
 
     }
 
-    private function termsAndConditions($loan, $address, $dueDate): string
+    private function termsAndConditions($loan, $address, $dueDate,$signature=""): string
     {
         $user=User::find(Auth::id());
         $fullname =$user->firstName.' '.$user->lastName;
@@ -125,6 +129,7 @@ class GuarantorController extends Controller
 <div class='mt-4'><strong>PLEASE NOTE: THIS AGREEMENT IS CORRELATED WITH AGREEMENT [01/00] and [02/00]</strong></div>
 <div class='mt-4'>The parties agree as follows:&nbsp;</div>
 <div class='mt-4'>Guarantor <span class='underline font-bold'>$fullname</span> located at <span class='underline font-bold'>$address</span> promises to unconditionally guarantee to the Lender, the full payment and performance by Employee of all duties and obligations arising under this Agreement. The Guarantor agrees that this guarantee shall remain in full force and effect and be binding on the Guarantor until this Agreement is satisfied. </div>
-<div class='mt-4'>Where the Employee fails to pay back the loan to Zachangu Microfinance, the guarantor will repay the loan together with all outstanding charges indicated in this agreement. </div>";
+<div class='mt-4'>Where the Employee fails to pay back the loan to Zachangu Microfinance, the guarantor will repay the loan together with all outstanding charges indicated in this agreement. </div>
+<div class='mt-6'>$signature</div>";
     }
 }

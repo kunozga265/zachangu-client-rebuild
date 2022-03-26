@@ -186,12 +186,12 @@
                             <div class="mt-6">
                                 <div class="flex items-center justify-start">
                                     <div class="mt-0 p-1 h-6 w-6 rounded-full text-white text-center text-xs bg-gray-800 ">3</div>
-                                    <span class="text-xl ml-4">Borrower License Agreement</span>
+                                    <span class="text-xl ml-4">Employee Loan Agreement</span>
                                 </div>
                                 <div class="mx-2 p-6  border-l-2 border-gray-200">
                                     <div class="">
                                         <div> <jet-button-secondary class="mt-4" @click.native="termsAndConditionsDialog=true">View File</jet-button-secondary></div>
-                                        <div class="mt-2 text-sm text-gray-600">Terms and Conditions File</div>
+                                        <div class="mt-2 text-sm text-gray-600">Loan Agreement File</div>
                                         <jet-dialog-modal :show="termsAndConditionsDialog" @close="closeModal">
                                             <template #title>
                                                 Zachangu Microfinance Agency
@@ -215,12 +215,12 @@
                             <div class="mt-6">
                                 <div class="flex items-center justify-start">
                                     <div class="mt-0 p-1 h-6 w-6 rounded-full text-white text-center text-xs bg-gray-800 ">4</div>
-                                    <span class="text-xl ml-4">Guarantor License Agreement</span>
+                                    <span class="text-xl ml-4">Guarantor Loan Agreement</span>
                                 </div>
-                                <div class="mt-4 mx-2 p-6  border-l-2 border-gray-200">
+                                <div class="mx-2 p-6  border-l-2 border-gray-200">
 
                                     <div> <jet-button-secondary class="mt-4" @click.native="termsAndConditionsGuarantorDialog=true">View File</jet-button-secondary></div>
-                                    <div class="mt-2 text-sm text-gray-600">Terms and Conditions File</div>
+                                    <div class="mt-2 text-sm text-gray-600">Loan Agreement File</div>
 
                                     <jet-dialog-modal :show="termsAndConditionsGuarantorDialog" @close="closeGuarantorModal">
                                         <template #title>

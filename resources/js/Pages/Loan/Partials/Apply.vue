@@ -162,7 +162,9 @@ export default {
     },
     methods:{
         apply(){
-            this.$inertia.post(route('loan.apply',{'code':this.loan.code}))
+            this.$inertia.post(route('loan.apply',{'code':this.loan.code}),{
+                browserInfo:navigator.userAgent
+            })
         },
         computeHumanReadable:function(duration){
             let today=(new Date().getTime())/1000;

@@ -232,12 +232,12 @@
                                                 <table class="w-full table-fixed">
                                                     <thead>
                                                     <tr class="border-gray-400 border-b">
-                                                        <th class="text-center text-xs sm:text-sm md:text-base">Payments</th>
-                                                        <th class="text-right text-xs sm:text-sm md:text-base">Opening Balance</th>
-<!--                                                        <th class="text-right text-xs sm:text-sm md:text-base invisible md:visible">Monthly Payment</th>-->
-                                                        <th class="text-right text-xs sm:text-sm md:text-base">Principal</th>
-                                                        <th class="text-right text-xs sm:text-sm md:text-base">Interest</th>
-                                                        <th class="text-right text-xs sm:text-sm md:text-base">Closing Balance</th>
+                                                        <th class="text-center text-tiny sm:text-xs md:text-sm lg:text-base">Payments</th>
+                                                        <th class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">Opening Balance</th>
+                                                        <!--                                                <th class="text-right text-xs sm:text-sm md:text-base invisible md:visible">Monthly Payment</th>-->
+                                                        <th class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">Principal</th>
+                                                        <th class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">Interest</th>
+                                                        <th class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">Closing Balance</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody class="mt-2">
@@ -245,12 +245,12 @@
                                                         v-for="(summary,index) in loanSummary"
                                                         :key="index"
                                                     >
-                                                        <td class="text-center text-xs sm:text-sm md:text-base">{{ computeDay(summary.month) }}</td>
-                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.openingBalance }}</td>
+                                                        <td class="text-center text-tiny sm:text-xs md:text-sm lg:text-base">{{ computeDay(summary.month) }}</td>
+                                                        <td class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">{{ summary.openingBalance }}</td>
                                                         <!--                                                <td class="text-right text-xs sm:text-sm md:text-base invisible md:visible">{{ summary.monthlyPayment }}</td>-->
-                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.principal }}</td>
-                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.interest }}</td>
-                                                        <td class="text-right text-xs sm:text-sm md:text-base">{{ summary.closingBalance }}</td>
+                                                        <td class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">{{ summary.principal }}</td>
+                                                        <td class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">{{ summary.interest }}</td>
+                                                        <td class="text-right text-tiny sm:text-xs md:text-sm lg:text-base">{{ summary.closingBalance }}</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>

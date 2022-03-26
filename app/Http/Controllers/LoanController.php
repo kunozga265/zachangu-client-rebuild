@@ -48,7 +48,7 @@ class LoanController extends Controller
                 $loan->appliedDate=date('jS F, Y',$loan->appliedDate);
             }
 
-            return Inertia::render('Loan/Index', [
+            return Inertia::render('Guarantor/Index', [
                 'loans' => $loans,
                 'role'=>$role
             ]);
@@ -395,10 +395,16 @@ class LoanController extends Controller
         $loan=$user->loans()->where('code',$code)->first();
 
         if (is_object($loan)) {
- 	    $employee=Employee::where('nationalId',$loan->nationalId)->first();
+//            $macAddress=exec('getmac');
+
+            $ipAddress=\Request::ip();
+            $signatureTime=Carbon::now()->toDateTimeString();
+            $signature="Signature: [$request->browserInfo, Ip Address: $ipAddress, Time: $signatureTime]";
+
+ 	        $employee=Employee::where('nationalId',$loan->nationalId)->first();
             $loan->update([
                 'progress' => 1,
-                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),$loan->dueDate,$employee),
+                'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),$loan->dueDate,$employee,$signature),
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
 
@@ -549,7 +555,7 @@ class LoanController extends Controller
             return $lowercaseExt;
     }
 
-    private function termsAndConditions($loan, $decodedAddress, $dueDate, $employee): string
+    private function termsAndConditions($loan, $decodedAddress, $dueDate, $employee,$signature=""): string
     {
         $issuedDate=date('d/m/y');
         $day=date('d');
@@ -605,9 +611,7 @@ class LoanController extends Controller
             $_dueDate->addMonth();
 
         }
-        $macAddress=exec('getmac');
-        $ipAddress=\Request::ip();
-        $signatureTime=Carbon::now()->toDateTimeString();
+
 
 
         return "
@@ -629,12 +633,12 @@ class LoanController extends Controller
  <table class='my-4 w-full table-fixed'>
     <thead>
     <tr class='border-gray-400 border-b'>
-        <th class='text-center text-xs sm:text-sm md:text-base'>Payment Date</th>
-        <th class='text-right text-xs sm:text-sm md:text-base'>Opening Balance</th>
-        <th class='text-right text-xs sm:text-sm md:text-base'>Monthly Payment</th>
-        <th class='text-right text-xs sm:text-sm md:text-base'>Principal</th>
-        <th class='text-right text-xs sm:text-sm md:text-base'>Interest</th>
-        <th class='text-right text-xs sm:text-sm md:text-base'>Closing Balance</th>
+        <th class='text-center text-tiny sm:text-xs md:text-sm lg:text-base'>Payment Date</th>
+        <th class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>Opening Balance</th>
+        <th class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>Monthly Payment</th>
+        <th class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>Principal</th>
+        <th class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>Interest</th>
+        <th class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>Closing Balance</th>
     </tr>
     </thead>
     <tbody class='mt-2'>
@@ -656,7 +660,7 @@ class LoanController extends Controller
 <div class='mt-4'>16. <strong>Disputes:</strong> Any dispute arising from this Agreement shall be resolved in the courts of the Republic of Malawi.&nbsp;</div>
 <div class='mt-4'>17. <strong>Entire Agreement:</strong> This Agreement contains the entire understanding between the parties and supersedes and cancels all prior agreements of the parties, whether oral or written, with respect to such subject matter.&nbsp;</div>
 <div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>
-<div class='mt-6'>Signed: [Mac Address:$macAddress, IP Address:$ipAddress, Time:$signatureTime]</div>"
+<div class='mt-6'>$signature</div>"
             ;
     }
 

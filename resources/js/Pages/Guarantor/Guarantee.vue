@@ -321,7 +321,9 @@ export default {
     },
     methods:{
         guarantee(){
-            this.$inertia.post(route('guarantor.guarantee',{'code':this.loan.code}))
+            this.$inertia.post(route('guarantor.guarantee',{'code':this.loan.code}),{
+                browserInfo:navigator.userAgent
+            })
         },
         computeHumanReadable:function(duration){
             let today=(new Date().getTime())/1000;

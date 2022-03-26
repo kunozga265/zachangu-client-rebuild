@@ -2,7 +2,7 @@
     <app-layout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{$page.props.role==='applied'?'Applied Loans':'Guaranteed Loans'}}
+                Applied Loans
             </h2>
         </template>
 
