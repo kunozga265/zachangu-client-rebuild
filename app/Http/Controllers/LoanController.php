@@ -386,6 +386,9 @@ class LoanController extends Controller
 
         $dueDate->addMonths($payments);
 
+        //correct date
+        $dueDate->subMonth();
+
         return $dueDate->getTimestamp();
 
     }
@@ -571,6 +574,9 @@ class LoanController extends Controller
 
         //dates
         $_dueDate=Carbon::createFromTimestamp($dueDate)->subMonths($loan->payments);
+        //correct date
+        $_dueDate->addMonth();
+
         $dueDate=date('jS F, Y',$dueDate);
 
         //make calculations
