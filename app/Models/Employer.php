@@ -21,7 +21,12 @@ class Employer extends Model
     protected $fillable=[
         'name',
         'email',
-        'address',
+        'physicalAddressName',
+        'physicalAddressBox',
+        'physicalAddressLocation',
+        'proxyName',
+        'proxyEmail',
+        'proxyPhoneNumber',
         'letter',
     ];
 
