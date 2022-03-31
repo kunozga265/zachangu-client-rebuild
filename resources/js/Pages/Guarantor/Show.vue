@@ -161,10 +161,10 @@
                                             <div>{{loan.contractDuration}}</div>
                                             <div class="text-sm text-gray-400">Contract Expiry Date</div>
                                         </div>
-                                        <div class="mt-4 md:ml-4">
+<!--                                        <div class="mt-4 md:ml-4">
                                             <a :href="url(loan.contract)" target="_blank"> <jet-button-secondary>View File</jet-button-secondary></a>
                                             <div class="mt-2 text-sm text-gray-400">Contract File</div>
-                                        </div>
+                                        </div>-->
                                     </div>
 
                                     <div class="mt-6 text-lg text-gray-400">Payment Details</div>

@@ -25,6 +25,8 @@ use Inertia\Inertia;
  * 3 - Active Loan
  * 4 - Closed Loan
  * 5 - Defaulted
+ * 6 - Over Due
+ * 7 - Rejected
   */
 
 class LoanController extends Controller
@@ -163,7 +165,7 @@ class LoanController extends Controller
             'payDay'               => ['required'],
             'paySlipFile'          => ['required'],
             'nationalIdFile'       => ['required'],
-            'contractFile'         => ['required'],
+//            'contractFile'         => ['required'],
             'net'                  => ['required'],
             'payments'             => ['required'],
 //            'termsAndConditions'   => ['required'],
@@ -327,7 +329,7 @@ class LoanController extends Controller
             'payDay'               => ['required'],
             'paySlipFile'          => ['required'],
             'nationalIdFile'       => ['required'],
-            'contractFile'         => ['required'],
+//            'contractFile'         => ['required'],
             'net'                  => ['required'],
             'payments'             => ['required'],
 //            'termsAndConditions'   => ['required'],
@@ -629,7 +631,7 @@ class LoanController extends Controller
 <div class='mt-4'> <span class='underline font-bold'>$fullname</span>, located at <span class='underline font-bold'>$address</span> , hereinafter referred to as the “Employee” ”Who is also the Borrower”;</div>
 <div class='mt-4'>And&nbsp;</div>
 <div class='mt-4'><strong>ZACHANGU MICROFINANCE AGENCY</strong>, located at <strong>AREA 49-SHIRE</strong>, hereinafter referred to as the “Lender”;&nbsp;</div>
-<div class='mt-4'><strong>WHEREAS</strong> at the request of the Borrower, the Lender has agreed to grant a Payday Loan of <span class='underline font-bold'>MK$loan->amount</span> to the Borrower till <span class='underline font-bold'>$dueDate</span> on terms and conditions hereinafter contained.</div>
+<div class='mt-4'><strong>WHEREAS</strong> at the request of the Borrower, the Lender has agreed to grant a Loan of <span class='underline font-bold'>MK$loan->amount</span> to the Borrower till <span class='underline font-bold'>$dueDate</span> on terms and conditions hereinafter contained.</div>
 <div class='mt-4'><strong>PLEASE NOTE: THIS AGREEMENT IS CORRELATED WITH AGREEMENT [02/00] and [03/00]</strong></div>
 <div class='mt-4'>The parties agree as follows:&nbsp;</div>
 <div class='mt-4'>1. <strong>Loan Amount</strong>: The Lender agrees to loan the Employee the principal sum of <span class='underline font-bold'>MK$loan->amount</span> (Not more than MK200,000.00).&nbsp;</div>

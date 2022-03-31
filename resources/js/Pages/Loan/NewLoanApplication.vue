@@ -144,10 +144,11 @@
                                             />
 <!--                                            <jet-input id="nationalId" type="text" class="mt-1 block w-full" v-model="form.nationalId" required autocomplete="National Id" />-->
                                         </div>
+                                        <!--
                                         <div class="mt-4 md:ml-4">
                                             <jet-label for="contractFile" value="Upload your contract letter" />
                                             <input type="file" @input="contractUpload($event.target.files[0])" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"/>
-                                        </div>
+                                        </div>-->
                                     </div>
 
                                     <div class="mt-6 text-lg text-gray-400">Payment Details</div>
@@ -422,11 +423,11 @@
                     this.errorMessage='Set a contract expiry date';
                     return false;
                 }
-                else if(this.form.contractFile===''){
+              /*  else if(this.form.contractFile===''){
                     this.errorSection='Workplace Information';
                     this.errorMessage='Upload a contract';
                     return false;
-                }
+                }*/
                 else if(this.form.payDay===null){
                     this.errorSection='Workplace Information';
                     this.errorMessage='Set your pay day';
