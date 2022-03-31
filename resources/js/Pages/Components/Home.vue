@@ -6,14 +6,14 @@
                     <div class="px-6 py-12 sm:px-20 bg-white border-b border-gray-200">
 
                         <div>
-                            <inertia-link class="pl-0 p-2"  :href="route('loan.new')">
-                                <jet-button :disabled="loan!=null">
+                            <inertia-link :href="route('loan.new')">
+                                <jet-button :disabled="loan!=null" class="ml-0 m-2"  >
                                     Apply for loan
                                 </jet-button>
                             </inertia-link>
 
-                            <inertia-link class="p-2" :href="route('guarantor')">
-                                <jet-secondary-button>
+                            <inertia-link  :href="route('guarantor')">
+                                <jet-secondary-button class="ml-0 sm:m-2">
                                     Guarantee Loan
                                 </jet-secondary-button>
                             </inertia-link>
@@ -28,7 +28,7 @@
                             <inertia-link
                                 :href="route('loan.show',{'code':loan.code})"
                             >
-                                <div class="cursor-pointer m-2 p-6 rounded bg-gray-800 hover:bg-gray-700 active:bg-gray-900 transition">
+                                <div class="cursor-pointer ml-0 m-2 p-6 rounded bg-gray-800 hover:bg-gray-700 active:bg-gray-900 transition">
                                     <div class="text-4xl text-gray-100 font-bold ">MK{{ loan.amount }}</div>
                                     <div class=" flex justify-start">
                                         <alert-circle :fill-color="getStatusColor(loan.progress)"/>
