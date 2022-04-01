@@ -14,6 +14,8 @@
 
                             <jet-validation-errors class="mb-4" />
 
+                            <div class="text-lg text-gray-400 ">Workplace Details</div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2">
                                 <div class="" >
                                     <jet-label for="name" value="Name" />
@@ -25,7 +27,7 @@
                                 </div>
 
                                 <div class="mt-4 md:col-span-2">
-                                    <jet-label for="physicalAddressName" value="Physical Address Name" />
+                                    <jet-label for="physicalAddressName" value="Physical Address" />
                                     <jet-input id="physicalAddressName" type="text" class="mt-1 block w-full" v-model="form.physicalAddressName" required />
                                 </div>
                                 <div class="mt-4">
@@ -50,11 +52,11 @@
 
                             </div>
 
-                            <div class="mt-6 text-lg text-gray-400 ">Proxy Details</div>
+                            <div class="mt-6 text-lg text-gray-400 ">Employer Details</div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2">
                                 <div class="" >
-                                    <jet-label for="proxyName" value="Name" />
+                                    <jet-label for="proxyName" value="Full Name" />
                                     <jet-input id="proxyName" type="text" class="mt-1 block w-full" v-model="form.proxyName" required  autocomplete="Name" />
                                 </div>
                                 <div class="mt-4 md:ml-4 md:mt-0">
@@ -80,7 +82,7 @@
             <div class="fixed bottom-0 h-20 p-6 bg-white shadow w-full flex items-center">
                 <div v-if="validation" class="w-full flex items-center justify-center">
                     <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Save Employer
+                        Register Employer
                     </jet-button>
                 </div>
                 <div v-else>
@@ -180,7 +182,7 @@ export default {
                     ... data,
 
                 }))
-                .post(this.route('employer.store'))
+                .post(this.route('employer.register'))
         },
         letterUpload(file){
             const reader=new FileReader();

@@ -6,8 +6,9 @@
             </h2>
         </template>
 
-        <select-employer  v-if="$page.props.user.employer_id == null" />
-        <home :loan="$page.props.loan" v-else/>
+<!--        <select-employer  v-if="$page.props.user.employer_id == null" />-->
+<!--        <home :loan="$page.props.loan" v-else/>-->
+        <home :loan="$page.props.loan"/>
 
     </app-layout>
 </template>
@@ -15,7 +16,7 @@
 <script>
     import AppLayout from '@/Layouts/AppLayout'
     import Welcome from '@/Jetstream/Welcome'
-    import SelectEmployer from '@/Pages/Components/SelectEmployer'
+    import SelectEmployer from '@/Pages/Employer/Select'
     import Home from '@/Pages/Components/Home'
      import JetButton from '@/Jetstream/Button'
 

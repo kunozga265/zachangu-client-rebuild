@@ -62,71 +62,75 @@ class LoanController extends Controller
         $user=User::find(Auth::id());
         $loan=$user->loans()->where('code',$code)->first();
 
+        if($user->employer_id != null){
+            //check for eligibility whether the employee data is available
+            $employee=$user->employer->employees()->where('nationalId',$user->nationalId)->first();
 
-        //check for eligibility whether the employee data is available
-        $employee=$user->employer->employees()->where('nationalId',$user->nationalId)->first();
+            //contract duration
+            $contractDurationEligibility=false;
+            $contractDuration='';
 
-        //contract duration
-        $contractDurationEligibility=false;
-        $contractDuration='';
+            //current time
+            $now=Carbon::now();
 
-        //current time
-        $now=Carbon::now();
+            //if the employee's data is available under employer
+            if (is_object($employee)){
+                $contractDuration=$employee->contractDuration;
+                $time=Carbon::createFromTimestamp($contractDuration);
 
-        //if the employee's data is available under employer
-        if (is_object($employee)){
-            $contractDuration=$employee->contractDuration;
-            $time=Carbon::createFromTimestamp($contractDuration);
+                $diff=$time->diff($now);
 
-            $diff=$time->diff($now);
-
-            //if the contract date is ahead
-            if($diff->invert == 1){
-                //eligible if the contract date is greater than a year
-                if($diff->y > 0){
-                    $contractDurationEligibility=true;
-                }
-                else{
-                    //eligible if the contract date is equal or greater than 3 months
-                    if($diff->m >= 6) {
-                        $contractDurationEligibility = true;
-                    //eligible if contract expires within 6 months
-                    }else{
-                        $contractDurationEligibility=false;
+                //if the contract date is ahead
+                if($diff->invert == 1){
+                    //eligible if the contract date is greater than a year
+                    if($diff->y > 0){
+                        $contractDurationEligibility=true;
+                    }
+                    else{
+                        //eligible if the contract date is equal or greater than 3 months
+                        if($diff->m >= 6) {
+                            $contractDurationEligibility = true;
+                            //eligible if contract expires within 6 months
+                        }else{
+                            $contractDurationEligibility=false;
+                        }
                     }
                 }
+                //not eligible if contract has expired
+                else {
+                    $contractDurationEligibility=false;
+                    $contractDuration=0;
+                }
             }
-            //not eligible if contract has expired
-            else {
-                $contractDurationEligibility=false;
-                $contractDuration=0;
+
+            if (is_object($loan)) {
+
+                $dueDate=$loan->dueDate;
+                $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
+                $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
+                $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
+                $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
+                $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
+                $loan->physicalAddress=json_decode($loan->physicalAddress);
+                $loan->workAddress=json_decode($loan->workAddress);
+
+                $employee=Employee::where('nationalId',$loan->nationalId)->first();
+
+                return Inertia::render('Loan/Show', [
+                    'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$dueDate,$employee),
+                    'loan' => $loan,
+                    'contractDuration'=>$contractDuration,
+                    'contractDurationDate'  => date('jS F, Y',$contractDuration),
+                    'contractDurationEligibility'=>$contractDurationEligibility,
+                    'employer'=>$employee->employer
+
+                ]);
+            }else{
+                return Redirect::route('dashboard');
             }
-        }
 
-        if (is_object($loan)) {
-
-            $dueDate=$loan->dueDate;
-            $loan->dueDate=$loan->dueDate!=null?date('jS F, Y',$loan->dueDate):null;
-            $loan->appliedDate=$loan->appliedDate!=null?date('jS F, Y',$loan->appliedDate):null;
-            $loan->guarantorDate=$loan->guarantorDate!=null?date('jS F, Y',$loan->guarantorDate):null;
-            $loan->approvedDate=$loan->approvedDate!=null?date('jS F, Y',$loan->approvedDate):null;
-            $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
-            $loan->physicalAddress=json_decode($loan->physicalAddress);
-            $loan->workAddress=json_decode($loan->workAddress);
-
-            $employee=Employee::where('nationalId',$loan->nationalId)->first();
-
-            return Inertia::render('Loan/Show', [
-                'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$dueDate,$employee),
-                'loan' => $loan,
-                'contractDuration'=>$contractDuration,
-                'contractDurationDate'  => date('jS F, Y',$contractDuration),
-                'contractDurationEligibility'=>$contractDurationEligibility,
-                'employer'=>$employee->employer
-
-            ]);
         }else{
-            return Redirect::route('dashboard');
+            return Redirect::route('employer.index');
         }
     }
 
@@ -196,6 +200,7 @@ class LoanController extends Controller
                 'progress'             => 0,
                 'amount'               => $request->amount,
                 'net'                  => $request->net,
+                'score'                => 0,
                 'payments'             => $request->payments,
                 'dueDate'              => $this->calculateDueDate($request->payDay,$request->payments),
                 'user_id'              => Auth::id(),
@@ -408,7 +413,7 @@ class LoanController extends Controller
 
  	        $employee=Employee::where('nationalId',$loan->nationalId)->first();
             $loan->update([
-                'progress' => 1,
+                'progress' => 2,
                 'termsAndConditions' => $this->termsAndConditions($loan,json_decode($loan->physicalAddress),$loan->dueDate,$employee,$signature),
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
@@ -420,6 +425,15 @@ class LoanController extends Controller
                 'subscription'=>Carbon::today()->addMonth(3)->getTimestamp()
             ]);*/
 
+            $role=Role::where('name','admin')->first();
+            $userAdmin=$role->users()->first();
+            $contents=json_decode($userAdmin->contents);
+            $loanSummary=$this->paymentsCalculation($loan->dueDate,$loan,$contents);
+
+            $employee=Employee::where('nationalId',$loan->nationalId)->first();
+            Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee,$loan->code));
+            Mail::to($employee->employer->proxyEmail)->cc('admin@zachanguloans.com')->send(new EmployerPendingMail($loan,$employee->employer->proxyName,$loanSummary));
+
 
             return Redirect::route('loan.show',['code'=>$loan->code]);
 
@@ -430,53 +444,56 @@ class LoanController extends Controller
     private function getScore($loan){
 
         $employee=Employee::where('nationalId',$loan->nationalId)->first();
+        if(is_object($employee)){
+            //decoding physical address
+            $employeePhysicalAddress=json_decode($employee->physicalAddress);
+            $loanPhysicalAddress=json_decode($loan->physicalAddress);
 
-        //decoding physical address
-        $employeePhysicalAddress=json_decode($employee->physicalAddress);
-        $loanPhysicalAddress=json_decode($loan->physicalAddress);
+            //calculating score
+            similar_text($employeePhysicalAddress->name,$loanPhysicalAddress->name,$physicalAddressName);
+            similar_text($employeePhysicalAddress->box,$loanPhysicalAddress->box,$physicalAddressBox);
+            similar_text($employeePhysicalAddress->location,$loanPhysicalAddress->location,$physicalAddressLocation);
 
-        //calculating score
-        similar_text($employeePhysicalAddress->name,$loanPhysicalAddress->name,$physicalAddressName);
-        similar_text($employeePhysicalAddress->box,$loanPhysicalAddress->box,$physicalAddressBox);
-        similar_text($employeePhysicalAddress->location,$loanPhysicalAddress->location,$physicalAddressLocation);
+            //decoding work address
+            $employeeWorkAddress=json_decode($employee->workAddress);
+            $loanWorkAddress=json_decode($loan->workAddress);
 
-        //decoding work address
-        $employeeWorkAddress=json_decode($employee->workAddress);
-        $loanWorkAddress=json_decode($loan->workAddress);
+            //calculating score
+            similar_text($employeeWorkAddress->name,$loanWorkAddress->name,$workAddressName);
+            similar_text($employeeWorkAddress->box,$loanWorkAddress->box,$workAddressBox);
+            similar_text($employeeWorkAddress->location,$loanWorkAddress->location,$workAddressLocation);
 
-        //calculating score
-        similar_text($employeeWorkAddress->name,$loanWorkAddress->name,$workAddressName);
-        similar_text($employeeWorkAddress->box,$loanWorkAddress->box,$workAddressBox);
-        similar_text($employeeWorkAddress->location,$loanWorkAddress->location,$workAddressLocation);
+            //computing dates
+            $employeeContractDuration=date('jS F, Y',$employee->contractDuration);
+            $loanContractDuration=date('jS F, Y',$loan->contractDuration);
 
-        //computing dates
-        $employeeContractDuration=date('jS F, Y',$employee->contractDuration);
-        $loanContractDuration=date('jS F, Y',$loan->contractDuration);
-
-        similar_text(substr($employeeContractDuration,0,-6),substr($loanContractDuration,0,-6),$contractDurationDate);
+            similar_text(substr($employeeContractDuration,0,-6),substr($loanContractDuration,0,-6),$contractDurationDate);
 
 
-        similar_text($employee->firstName,$loan->firstName,$firstName);
-        similar_text($employee->middleName,$loan->middleName,$middleName);
-        similar_text($employee->lastName,$loan->lastName,$lastName);
-        similar_text($employee->email,$loan->email,$email);
-        similar_text($employee->phoneNumberMobile,$loan->phoneNumberMobile,$phoneNumberMobile);
-        similar_text($employee->phoneNumberWork,$loan->phoneNumberWork,$phoneNumberWork);
+            similar_text($employee->firstName,$loan->firstName,$firstName);
+            similar_text($employee->middleName,$loan->middleName,$middleName);
+            similar_text($employee->lastName,$loan->lastName,$lastName);
+            similar_text($employee->email,$loan->email,$email);
+            similar_text($employee->phoneNumberMobile,$loan->phoneNumberMobile,$phoneNumberMobile);
+            similar_text($employee->phoneNumberWork,$loan->phoneNumberWork,$phoneNumberWork);
 
-        similar_text($employee->position,$loan->position,$position);
+            similar_text($employee->position,$loan->position,$position);
 
-        //total score
-        return (
-                round($firstName)+
-                round($middleName)+
-                round($lastName)+
-                round($email)+
-                round($phoneNumberMobile)+
-                round($phoneNumberWork)+
-                round(($physicalAddressName + $physicalAddressBox + $physicalAddressLocation)/3)+
-                round($position)+
-                round((/*$workAddressName +*/ $workAddressBox + $workAddressLocation)/2)+
-                round($contractDurationDate))/10;
+            //total score
+            return (
+                    round($firstName)+
+                    round($middleName)+
+                    round($lastName)+
+                    round($email)+
+                    round($phoneNumberMobile)+
+                    round($phoneNumberWork)+
+                    round(($physicalAddressName + $physicalAddressBox + $physicalAddressLocation)/3)+
+                    round($position)+
+                    round((/*$workAddressName +*/ $workAddressBox + $workAddressLocation)/2)+
+                    round($contractDurationDate))/10;
+        }else
+            return 0;
+
     }
 
     public function uploadFile(Request $request)
@@ -574,51 +591,9 @@ class LoanController extends Controller
         $contents=json_decode($user->contents);
         $interest=($contents->interest)*100;
 
-        //dates
-        $_dueDate=Carbon::createFromTimestamp($dueDate)->subMonths($loan->payments);
-        //correct date
-        $_dueDate->addMonth();
+        $loanSummary=$this->paymentsCalculation($dueDate,$loan,$contents);
 
         $dueDate=date('jS F, Y',$dueDate);
-
-        //make calculations
-        $loanSummary="";
-        $balance=$loan->amount;
-
-        $num=$contents->interest*pow((1+$contents->interest),$loan->payments);
-        $den=pow((1+$contents->interest),$loan->payments)-1;
-        $monthlyPayment=$loan->amount*($num/$den);
-
-
-
-
-        for($payment=1; $payment<=$loan->payments;$payment++){
-            $openingBalance=$balance;
-            $monthlyInterest=$balance*$contents->interest;
-            $balance=floatval($balance*(1+$contents->interest))-floatval($monthlyPayment);
-            $principal=floatval($monthlyPayment)-floatval($monthlyInterest);
-
-            $_openingBalance=number_format($openingBalance,2);
-            $_monthlyPayment=number_format($monthlyPayment,2);
-            $_monthlyInterest=number_format($monthlyInterest,2);
-            $_balance=number_format($balance,2);
-            $_principal=number_format($principal,2);
-
-            $calculatedDueDate=date('Y-m-d',$_dueDate->getTimestamp());
-
-            $loanSummary .=
-                "<tr>
-                    <td class='text-center text-tiny sm:text-xs md:text-sm lg:text-base'>$calculatedDueDate</td>
-                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_openingBalance</td>
-                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyPayment</td>
-                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_principal</td>
-                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyInterest</td>
-                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_balance</td>
-                </tr>";
-
-            $_dueDate->addMonth();
-
-        }
 
 
 
@@ -670,6 +645,51 @@ class LoanController extends Controller
 <div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>
 <div class='mt-6'>$signature</div>"
             ;
+    }
+
+    private function paymentsCalculation($dueDate,$loan,$contents){
+        //dates
+        $_dueDate=Carbon::createFromTimestamp($dueDate)->subMonths($loan->payments);
+        //correct date
+        $_dueDate->addMonth();
+
+        //make calculations
+        $loanSummary="";
+        $balance=$loan->amount;
+
+        $num=$contents->interest*pow((1+$contents->interest),$loan->payments);
+        $den=pow((1+$contents->interest),$loan->payments)-1;
+        $monthlyPayment=$loan->amount*($num/$den);
+
+        for($payment=1; $payment<=$loan->payments;$payment++){
+            $openingBalance=$balance;
+            $monthlyInterest=$balance*$contents->interest;
+            $balance=floatval($balance*(1+$contents->interest))-floatval($monthlyPayment);
+            $principal=floatval($monthlyPayment)-floatval($monthlyInterest);
+
+            $_openingBalance=number_format($openingBalance,2);
+            $_monthlyPayment=number_format($monthlyPayment,2);
+            $_monthlyInterest=number_format($monthlyInterest,2);
+            $_balance=number_format($balance,2);
+            $_principal=number_format($principal,2);
+
+            $calculatedDueDate=date('Y-m-d',$_dueDate->getTimestamp());
+
+            $loanSummary .=
+                "<tr>
+                    <td class='text-center text-tiny sm:text-xs md:text-sm lg:text-base'>$calculatedDueDate</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_openingBalance</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyPayment</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_principal</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_monthlyInterest</td>
+                    <td class='text-right text-tiny sm:text-xs md:text-sm lg:text-base'>$_balance</td>
+                </tr>";
+
+            $_dueDate->addMonth();
+
+        }
+
+        return $loanSummary;
     }
 
     private function currentLoansCount(): bool

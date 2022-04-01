@@ -5,7 +5,7 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="px-6 py-12 sm:px-20 bg-white border-b border-gray-200">
 
-                        <div>
+<!--                        <div>
                             <inertia-link :href="route('loan.new')">
                                 <jet-button :disabled="loan!=null" class="ml-0 m-2"  >
                                     Apply for loan
@@ -19,12 +19,12 @@
                             </inertia-link>
 
                             <jet-section-border />
-                        </div>
+                        </div>-->
 
                         <div v-if="loan">
-                            <div class="mb-4 text-3xl text-gray-800 font-bold">
+<!--                            <div class="mb-4 text-3xl text-gray-800 font-bold">
                                 Current Loans
-                            </div>
+                            </div>-->
                             <inertia-link
                                 :href="route('loan.show',{'code':loan.code})"
                             >
@@ -148,14 +148,14 @@
             </div>
         </div>
 
-<!--        <div class="w-full h-20"></div>-->
-<!--        <div v-show="loan==null" class=" p-6 bg-gray-800 w-full flex items-center justify-center">
+        <div class="w-full h-20"></div>
+        <div v-show="loan==null" class=" p-6 bg-gray-800 w-full flex items-center justify-center">
             <inertia-link :href="route('loan.new')">
                 <jet-button class="">
                     Apply for loan
                 </jet-button>
             </inertia-link>
-        </div>-->
+        </div>
 
     </div>
 </template>

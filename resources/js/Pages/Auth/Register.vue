@@ -42,7 +42,7 @@
                     <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
                 </div>
 
-                <div class="mt-4 md:col-span-2"">
+                <div class="mt-4 md:col-span-2">
                     <jet-label for="address" value="Address" />
                     <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" required />
                 </div>

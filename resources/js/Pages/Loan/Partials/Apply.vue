@@ -82,10 +82,15 @@
         <div class="w-full h-20"></div>
         <div class="fixed bottom-0 h-20 p-6 bg-white shadow w-full flex items-center">
             <div v-if="validation" class="w-full flex items-center justify-center">
+                <form @submit.prevent="apply">
 
-                <jet-button class="ml-4" @click.native="apply">
+<!--                <jet-button class="ml-4" @click.native="apply">
                     Apply for Loan
-                </jet-button>
+                </jet-button>-->
+                    <jet-button class="" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Apply for Loan
+                    </jet-button>
+                </form>
 
             </div>
             <div v-else>
@@ -124,6 +129,10 @@ export default {
     },
     data() {
         return {
+            form: this.$inertia.form({
+
+            }),
+
             termsAndConditionsCheck:false,
             termsAndConditionsDialog:false,
             errorMessage:'',
@@ -162,9 +171,12 @@ export default {
     },
     methods:{
         apply(){
-            this.$inertia.post(route('loan.apply',{'code':this.loan.code}),{
+            this.form.post(this.route('loan.apply',{'code':this.loan.code}),{
                 browserInfo:navigator.userAgent
             })
+            // this.$inertia.post(route('loan.apply',{'code':this.loan.code}),{
+            //     browserInfo:navigator.userAgent
+            // })
         },
         computeHumanReadable:function(duration){
             let today=(new Date().getTime())/1000;

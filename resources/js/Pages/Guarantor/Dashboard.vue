@@ -38,7 +38,7 @@
 <script>
     import AppLayout from '@/Layouts/AppLayout'
     import Welcome from '@/Jetstream/Welcome'
-    import SelectEmployer from '@/Pages/Components/SelectEmployer'
+    import SelectEmployer from '@/Pages/Employer/Select'
     import Home from '@/Pages/Components/Home'
     import JetButton from '@/Jetstream/Button'
     import JetInput from '@/Jetstream/Input'

@@ -68,8 +68,8 @@ class GuarantorController extends Controller
                 'guarantorDate'=>Carbon::now()->getTimestamp()
             ]);
 
- 	    $employee=Employee::where('nationalId',$loan->nationalId)->first();
-            Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee));
+ 	        $employee=Employee::where('nationalId',$loan->nationalId)->first();
+            Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee,$loan->code));
             Mail::to($employee->employer->proxyEmail)->cc('admin@zachanguloans.com')->send(new EmployerPendingMail($loan,$employee->employer->proxyName));
 
             return Redirect::route('guarantor.show',['code'=>$loan->code]);

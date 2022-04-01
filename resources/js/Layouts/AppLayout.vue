@@ -21,7 +21,12 @@
                                     Dashboard
                                 </jet-nav-link>
                             </div>
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex sm:items-center border-b-2 border-transparent hover:border-gray-300">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <jet-nav-link :href="route('loan.index',{role:'applied'})" :active="route().current('loan.index')">
+                                    Loan History
+                                </jet-nav-link>
+                            </div>
+<!--                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex sm:items-center border-b-2 border-transparent hover:border-gray-300">
                                 <jet-dropdown align="left" width="48" class=" ">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -46,7 +51,7 @@
 
                                     </template>
                                 </jet-dropdown>
-                            </div>
+                            </div>-->
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -108,11 +113,11 @@
                             Dashboard
                         </jet-responsive-nav-link>
                         <jet-responsive-nav-link :href="route('loan.index',{role:'applied'})">
-                            Applied Loans
+                            Loan History
                         </jet-responsive-nav-link>
-                        <jet-responsive-nav-link :href="route('loan.index',{role:'guaranteed'})">
+<!--                        <jet-responsive-nav-link :href="route('loan.index',{role:'guaranteed'})">
                             Guaranteed Loans
-                        </jet-responsive-nav-link>
+                        </jet-responsive-nav-link>-->
                     </div>
 
                     <!-- Responsive Settings Options -->

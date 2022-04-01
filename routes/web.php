@@ -48,20 +48,60 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
     */
     Route::get('/', [
         "uses" => "App\Http\Controllers\UserController@index",
-        'roles' =>['client']
+        'roles' =>['client','verified']
     ])->name('dashboard');
 
-    /*
-     * ------------------------------------------------------
-     * Assigns a user to an employer
-     * ------------------------------------------------------
-     * URL: /employer/select
-     * Method: POST
-    */
-    Route::post('/employer/select', [
-        "uses" => "App\Http\Controllers\UserController@employerSelect",
-        'roles' =>['client']
-    ])->name('employer.select');
+
+    Route::group(['prefix'=>'employer'],function () {
+        /*
+         * ------------------------------------------------------
+         * Displays employer register form
+         * ------------------------------------------------------
+         * URL: /employer
+         * Method: GET
+        */
+        Route::get('/register', [
+            "uses" => "App\Http\Controllers\EmployerController@create",
+            'roles' =>['client']
+        ])->name('employer.new');
+
+        /*
+         * ------------------------------------------------------
+         * Displays employer register form
+         * ------------------------------------------------------
+         * URL: /employer
+         * Method: POST
+        */
+        Route::post('/register', [
+            "uses" => "App\Http\Controllers\EmployerController@register",
+            'roles' =>['client']
+        ])->name('employer.register');
+
+        /*
+         * ------------------------------------------------------
+         * Displays select employer form
+         * ------------------------------------------------------
+         * URL: /employer/select
+         * Method: GET
+        */
+        Route::get('/select', [
+            "uses" => "App\Http\Controllers\EmployerController@select",
+            'roles' =>['client']
+        ])->name('employer.index');
+
+        /*
+         * ------------------------------------------------------
+         * Assigns a user to an employer
+         * ------------------------------------------------------
+         * URL: /employer/select
+         * Method: POST
+        */
+        Route::post('/select', [
+            "uses" => "App\Http\Controllers\EmployerController@employerSelect",
+            'roles' =>['client']
+        ])->name('employer.select');
+    });
+
 
 
     Route::group(['prefix'=>'loan'],function (){
@@ -75,7 +115,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/history/{role}',[
             "uses" => "App\Http\Controllers\LoanController@index",
-            'roles' =>['verified']
+            'roles' =>['client','verified']
         ])->name('loan.index');
 
 
@@ -88,7 +128,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/new', [
             "uses" => "App\Http\Controllers\LoanController@create",
-            'roles' =>['verified']
+            'roles' =>['client','verified']
         ])->name('loan.new');
 
         /*
@@ -100,7 +140,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::post('/new', [
             "uses" => "App\Http\Controllers\LoanController@store",
-            'roles' =>['verified']
+            'roles' =>['client','verified']
         ])->name('loan.store');
 
         /*
@@ -110,10 +150,12 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
          * URL: /loan/new
          * Method: POST
         */
+        /*
+         * Disabled
         Route::post('/new/subscribed', [
             "uses" => "App\Http\Controllers\LoanController@storeSubscribed",
             'roles' =>['verified']
-        ])->name('loan.subscribed');
+        ])->name('loan.subscribed');*/
 
         /*
          * ------------------------------------------------------
@@ -124,7 +166,7 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
         */
         Route::get('/view/{code}', [
             "uses" => "App\Http\Controllers\LoanController@show",
-            'roles' =>['verified']
+            'roles' =>['client','verified']
         ])->name('loan.show');
 
         /*
@@ -165,56 +207,59 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
     });
 
 
-    Route::group(['prefix'=>'guarantor'],function (){
-        /*
-        * ------------------------------------------------------
-        * Home Route - Displays the dashboard
-        * ------------------------------------------------------
-        * URL: /
-        * Method: GET
-        */
-        Route::get('/', [
-            "uses" => "App\Http\Controllers\UserController@guarantorDashboardView",
-            'roles' =>['verified']
-        ])->name('guarantor');
-
-        /*
-        * ------------------------------------------------------
-        * Displays loan to be guaranteed
-        * ------------------------------------------------------
-        * URL: /guarantee/{code}
-        * Method: GET
-        */
-        Route::get('/guarantee/{code}', [
-            "uses" => "App\Http\Controllers\GuarantorController@create",
-            'roles' =>['verified']
-        ])->name('guarantor.create');
-
-        /*
-        * ------------------------------------------------------
-        * Guarantee a loan
-        * ------------------------------------------------------
-        * URL: /guarantee/{code}
-        * Method: POST
-        */
-        Route::post('/guarantee/{code}', [
-            "uses" => "App\Http\Controllers\GuarantorController@guarantee",
-            'roles' =>['verified']
-        ])->name('guarantor.guarantee');
-
-        /*
-        * ------------------------------------------------------
-        * Displays loan to be guaranteed
-        * ------------------------------------------------------
-        * URL: /guarantee/{code}
-        * Method: GET
-        */
-        Route::get('/loan/{code}', [
-            "uses" => "App\Http\Controllers\GuarantorController@show",
-            'roles' =>['verified']
-        ])->name('guarantor.show');
-
-    });
+  /*
+   * Disabled Guarantor Functionality
+  */
+//  Route::group(['prefix'=>'guarantor'],function (){
+//        /*
+//        * ------------------------------------------------------
+//        * Home Route - Displays the dashboard
+//        * ------------------------------------------------------
+//        * URL: /
+//        * Method: GET
+//        */
+//        Route::get('/', [
+//            "uses" => "App\Http\Controllers\UserController@guarantorDashboardView",
+//            'roles' =>['verified']
+//        ])->name('guarantor');
+//
+//        /*
+//        * ------------------------------------------------------
+//        * Displays loan to be guaranteed
+//        * ------------------------------------------------------
+//        * URL: /guarantee/{code}
+//        * Method: GET
+//        */
+//        Route::get('/guarantee/{code}', [
+//            "uses" => "App\Http\Controllers\GuarantorController@create",
+//            'roles' =>['verified']
+//        ])->name('guarantor.create');
+//
+//        /*
+//        * ------------------------------------------------------
+//        * Guarantee a loan
+//        * ------------------------------------------------------
+//        * URL: /guarantee/{code}
+//        * Method: POST
+//        */
+//        Route::post('/guarantee/{code}', [
+//            "uses" => "App\Http\Controllers\GuarantorController@guarantee",
+//            'roles' =>['verified']
+//        ])->name('guarantor.guarantee');
+//
+//        /*
+//        * ------------------------------------------------------
+//        * Displays loan to be guaranteed
+//        * ------------------------------------------------------
+//        * URL: /guarantee/{code}
+//        * Method: GET
+//        */
+//        Route::get('/loan/{code}', [
+//            "uses" => "App\Http\Controllers\GuarantorController@show",
+//            'roles' =>['verified']
+//        ])->name('guarantor.show');
+//
+//    });
 
 });
 

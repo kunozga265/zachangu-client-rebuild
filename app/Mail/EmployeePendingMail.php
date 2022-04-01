@@ -15,16 +15,18 @@ class EmployeePendingMail extends Mailable
     public $employeeName;
     public $proxyName;
     public $employerName;
+    public $subject;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Employee $employee)
+    public function __construct(Employee $employee, $loanCode)
     {
         $this->employeeName=$employee->firstName." ".$employee->lastName;
         $this->proxyName=$employee->employer->proxyName;
         $this->employerName=$employee->employer->name;
+        $this->subject="Loan[$loanCode] Approval Pending";
     }
 
     /**
@@ -34,6 +36,6 @@ class EmployeePendingMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.employeePending')->subject('Loan Approval Pending');
+        return $this->view('emails.employeePending')->subject($this->subject);
     }
 }
