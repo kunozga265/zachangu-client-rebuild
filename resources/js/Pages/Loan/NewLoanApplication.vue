@@ -363,10 +363,47 @@
             }
         },
         created(){
-            this.form.nationalId= this.$page.props.user.nationalId
-            this.form.firstName= this.$page.props.user.firstName
-            this.form.lastName= this.$page.props.user.lastName
-            this.form.email= this.$page.props.user.email
+            if(localStorage.getItem('form')){
+                try{
+                    let form = JSON.parse(localStorage.getItem('form'))
+                        this.form.photo=form.photo
+                        this.form.firstName=form.firstName
+                        this.form.middleName=form.middleName
+                        this.form.lastName=form.lastName
+                        this.form.phoneNumberMobile=form.phoneNumberMobile
+                        this.form.phoneNumberWork=form.phoneNumberWork
+                        this.form.email=form.email
+                        this.physicalAddressName=form.physicalAddressName
+                        this.physicalAddressBox=form.physicalAddressBox
+                        this.physicalAddressLocation=form.physicalAddressLocation
+
+                        this.form.nationalId=form.nationalId
+                        this.form.nationalIdFile=form.nationalIdFile
+
+                        //Workplace Details
+                        this.workAddressName=form.workAddressName
+                        this.workAddressBox=form.workAddressBox
+                        this.workAddressLocation=form.workAddressLocation
+
+                        this.form.position=form.position
+                        this.form.contractDuration=form.contractDuration
+                        this.form.contractFile=form.contractFile
+                        this.form.payDay=form.payDay
+                        this.form.paySlipFile=form.paySlipFile
+                        this.form.net=form.net
+
+                        //Amount
+                        this.form.amount=form.amount
+                        this.selectedMonth=form.selectedMonth
+                }catch (e) {
+                    localStorage.removeItem('form')
+                }
+            }else{
+                this.form.nationalId= this.$page.props.user.nationalId
+                this.form.firstName= this.$page.props.user.firstName
+                this.form.lastName= this.$page.props.user.lastName
+                this.form.email= this.$page.props.user.email
+            }
         },
         computed:{
             // user(){
@@ -453,8 +490,11 @@
                     this.errorMessage='Your monthly payment cannot be more than half your net pay';
                     return false;
                 }
-                else
+                else {
+                    this.errorSection='';
+                    this.errorMessage='';
                     return true
+                }
             },
             computePhysicalAddress(){
                 let box=(this.physicalAddressBox).length!==0?'P. O. Box '+this.physicalAddressBox:'';
@@ -512,6 +552,14 @@
                 }
 
                 return summary
+            },
+        },
+        watch:{
+            errorMessage:function () {
+                this.saveSession()
+            },
+            selectedMonth:function () {
+                this.saveSession()
             },
         },
 
@@ -623,7 +671,44 @@
                 }
                 return payDay + day;
             },
-        }
+            saveSession(){
+                let form={
+                    //Personal Information
+                    "photo":this.form.photo,
+                    "firstName":this.form.firstName,
+                    "middleName":this.form.middleName,
+                    "lastName":this.form.lastName,
+                    "phoneNumberMobile":this.form.phoneNumberMobile,
+                    "phoneNumberWork":this.form.phoneNumberWork,
+                    "email":this.form.email,
+                    "physicalAddressName":this.physicalAddressName,
+                    "physicalAddressBox":this.physicalAddressBox,
+                    "physicalAddressLocation":this.physicalAddressLocation,
+
+                    "nationalId":this.form.nationalId,
+                    "nationalIdFile":this.form.nationalIdFile,
+
+                    //Workplace Details
+                    "workAddressName":this.workAddressName,
+                    "workAddressBox":this.workAddressBox,
+                    "workAddressLocation":this.workAddressLocation,
+
+                    "position":this.form.position,
+                    "contractDuration":this.form.contractDuration,
+                    "contractFile":this.form.contractFile,
+                    "payDay":this.form.payDay,
+                    "paySlipFile":this.form.paySlipFile,
+                    "net":this.form.net,
+
+                    //Amount
+                    "amount":this.form.amount,
+                    "selectedMonth":this.selectedMonth,
+                }
+
+                localStorage.setItem("form", JSON.stringify(form) )
+            }
+        },
+
 
 
     }

@@ -49,10 +49,12 @@ export default {
         Apply,
         Display,
         AppLayout,
+    },
+    created() {
+        if(localStorage.getItem('form')){
+            localStorage.removeItem('form')
+        }
     }
-
-
-
 }
 </script>
 
