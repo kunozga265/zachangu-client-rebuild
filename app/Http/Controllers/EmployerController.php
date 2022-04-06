@@ -46,6 +46,14 @@ class EmployerController extends Controller
                 $verified=Role::where('name','verified')->first();
                 $user->roles()->attach($verified);
 
+                //update score if applied for loan already
+                $currentLoan=$user->loans()->where('progress','<',4)->latest()->first();
+                if(is_object($currentLoan)){
+                    $currentLoan->update([
+                        'score' => LoanController::getScore($currentLoan)
+                    ]);
+                }
+
 //                return Inertia::render('Dashboard');
                 return Redirect::route('dashboard');
 
@@ -119,7 +127,7 @@ class EmployerController extends Controller
             'email'                     => ['required','email'],
         ])->validate();
 
-        $employer=Employer::create([
+        $employer=new Employer([
             'name'                      =>ucwords($request->name),
             'physicalAddressName'       =>ucwords($request->physicalAddressName),
             'physicalAddressBox'        =>$request->physicalAddressBox,
