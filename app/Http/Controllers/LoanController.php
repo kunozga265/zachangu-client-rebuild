@@ -441,7 +441,7 @@ class LoanController extends Controller
             return Redirect::back();
     }
 
-    private function getScore($loan){
+    public static function getScore($loan){
 
         $employee=Employee::where('nationalId',$loan->nationalId)->first();
         if(is_object($employee)){

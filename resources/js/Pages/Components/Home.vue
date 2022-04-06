@@ -148,8 +148,8 @@
             </div>
         </div>
 
-        <div class="w-full h-20"></div>
-        <div v-show="loan==null" class=" p-6 bg-gray-800 w-full flex items-center justify-center">
+        <div v-show="loan==null" class="w-full invisible h-0 lg:visible lg:h-20"></div>
+        <div v-show="loan==null" class="lg:bottom-0 lg:fixed p-6 bg-gray-800 w-full flex items-center justify-center">
             <inertia-link :href="route('loan.new')">
                 <jet-button class="">
                     Apply for loan
