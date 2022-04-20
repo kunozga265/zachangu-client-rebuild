@@ -151,7 +151,7 @@ class EmployerController extends Controller
         ]);
 
         try {
-//            Mail::to("admin@zachanguloans.com")->send(new RegisterEmployer($employer,$fullname));
+            Mail::to("admin@zachanguloans.com")->send(new RegisterEmployer($employer,$fullname));
         }catch (\Swift_TransportException $exception){
             //do something
         }
