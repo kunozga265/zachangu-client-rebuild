@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Mail\WelcomeMail;
+use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -46,12 +47,25 @@ class CreateNewUser implements CreatesNewUsers
             'address'         => ucwords($input['address'])
         ]);
 
+
+
+
         $user->save();
 
         $role=Role::where('name','client')->first();
         $user->roles()->attach($role);
 
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        Notification::create([
+            'contents'  =>json_encode([]),
+            'type'      =>"user_new",
+            'user_id'   =>$user->id,
+        ]);
+
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user));
+        }catch (\Swift_TransportException $exception){
+            //do something
+        }
 
         return $user;
 

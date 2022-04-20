@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\RegisterEmployer;
 use App\Models\Employer;
+use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -141,11 +142,21 @@ class EmployerController extends Controller
         $user=User::find(Auth::id());
         $fullname=$user->firstName." ".$user->lastName;
 
-        Mail::to("admin@zachanguloans.com")->send(new RegisterEmployer($employer,$fullname));
+        Notification::create([
+            'contents'  =>json_encode([
+                'employer'  =>  $employer,
+            ]),
+            'type'      =>"employer_register",
+            'user_id'   =>Auth::id(),
+        ]);
 
-        return Redirect::route('dashboard');
+        try {
+//            Mail::to("admin@zachanguloans.com")->send(new RegisterEmployer($employer,$fullname));
+        }catch (\Swift_TransportException $exception){
+            //do something
+        }
 
-
+        return Redirect::route('dashboard')->with('bannerMessage',"Details for $employer->name have been submitted. Our administrator will contact your employer to enable you to get a loan.");
 
     }
 }

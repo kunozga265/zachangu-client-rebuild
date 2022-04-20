@@ -1,6 +1,6 @@
 <template>
     <div >
-        <jet-banner />
+<!--        <jet-banner />-->
 
         <div class="min-h-screen bg-gray-100">
             <nav style="z-index:999999" class=" fixed w-full bg-white border-b border-gray-100">
@@ -167,7 +167,7 @@
 
 <script>
     import JetApplicationMark from '@/Jetstream/ApplicationMark'
-    import JetBanner from '@/Jetstream/Banner'
+    import JetBanner from '@/Pages/Components/Banner'
     import JetDropdown from '@/Jetstream/Dropdown'
     import JetDropdownLink from '@/Jetstream/DropdownLink'
     import JetNavLink from '@/Jetstream/NavLink'

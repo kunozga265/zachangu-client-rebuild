@@ -62,7 +62,10 @@ class HandleInertiaRequests extends Middleware
                 }else
                     return null;
 
-            }
+            },
+            'bannerMessage'=> function() use ($request){
+                return $request->session()->get('bannerMessage');
+            },
         ]);
     }
 }

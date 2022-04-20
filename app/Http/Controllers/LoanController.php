@@ -6,6 +6,7 @@ use App\Mail\EmployeePendingMail;
 use App\Mail\EmployerPendingMail;
 use App\Models\Employee;
 use App\Models\Loan;
+use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -178,7 +179,6 @@ class LoanController extends Controller
 
         if($this->currentLoansCount()){
 
-
             $loan = new Loan([
                 'code'                 => Carbon::now()->getTimestamp(), //generate code
                 'photo'                => $request->photo,
@@ -210,6 +210,12 @@ class LoanController extends Controller
 
             $loan->update([
                 'score'=>$this->getScore($loan)
+            ]);
+
+            Notification::create([
+                'contents'  =>json_encode([]),
+                'type'      =>"loan_new",
+                'user_id'   =>Auth::id(),
             ]);
 
             return Redirect::route('loan.show',['code'=>$loan->code]);
@@ -418,6 +424,15 @@ class LoanController extends Controller
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
 
+            Notification::create([
+                'contents'  =>json_encode([
+                    'amount'    =>  $loan->amount,
+                    'loanCode'  =>  $loan->code,
+                ]),
+                'type'      =>"loan_apply",
+                'user_id'   =>Auth::id(),
+            ]);
+
             /*
             * Subscription Disabled
             //subscribe for the next three months
@@ -431,8 +446,13 @@ class LoanController extends Controller
             $loanSummary=$this->paymentsCalculation($loan->dueDate,$loan,$contents);
 
             $employee=Employee::where('nationalId',$loan->nationalId)->first();
-            Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee,$loan->code));
-            Mail::to($employee->employer->proxyEmail)->cc('admin@zachanguloans.com')->send(new EmployerPendingMail($loan,$employee->employer->proxyName,$loanSummary));
+            try {
+                Mail::to($loan->email)->cc('admin@zachanguloans.com')->send(new EmployeePendingMail($employee,$loan->code));
+                Mail::to($employee->employer->proxyEmail)->cc('admin@zachanguloans.com')->send(new EmployerPendingMail($loan,$employee->employer->proxyName,$loanSummary));
+
+            }catch (\Swift_TransportException $exception){
+                //do something
+            }
 
 
             return Redirect::route('loan.show',['code'=>$loan->code]);
