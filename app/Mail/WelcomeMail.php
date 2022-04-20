@@ -30,6 +30,7 @@ class WelcomeMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.welcome')->subject('Welcome to Zachangu Loans')->attachFromStorageDisk('public_uploads','files/ZACHANGU_MICROFINANCE_AGENCY_EMPLOYER_AGREEMENT.pdf');
+//        return $this->view('emails.welcome')->subject('Welcome to Zachangu Loans')->attachFromStorageDisk('public_uploads','files/ZACHANGU_MICROFINANCE_AGENCY_EMPLOYER_AGREEMENT.pdf');
+        return $this->view('emails.welcome')->subject('Welcome to Zachangu Loans');
     }
 }

@@ -11,10 +11,11 @@
 <div>
     <p>Hi, {{$user->firstName}} {{$user->lastName}}!</p>
     <br>
-    <p>Zachangu Microfinance Agency is pleased to welcome you. We offer a platform that allows individuals with formal employment access to quick payday loans.</p>
-    <p>Ensure your employer has submitted your details to our administrator, if not, please download the attached employer agreement and have your employer submit it to admin@zachanguloans.com.</p>
-    <p> Apply for a loan or guarantee one today!</p>
+    <p>Zachangu Microfinance Agency is pleased to welcome you. We offer a platform that allows individuals with formal employment access to quick loans.</p>
+    <p>Ensure your employer has submitted your details to our administrator, if not, use the system to register your employer with us.</p>
+    <p> Apply for a loan today!</p>
     <br>
+    <p>Regards</p>
     <p>Zachangu Loans Administrator</p>
 </div>
 </body>
