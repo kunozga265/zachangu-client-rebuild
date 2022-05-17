@@ -17,10 +17,10 @@
 <script>
     import AppLayout from '@/Layouts/AppLayout'
     import Welcome from '@/Jetstream/Welcome'
-    import SelectEmployer from '@/Pages/Employer/Select'
-    import Home from '@/Pages/Components/Home'
+    import SelectEmployer from '@/Pages/Client/Employer/Select'
+    import Home from '@/Pages/Client/Components/Home'
      import JetButton from '@/Jetstream/Button'
-    import Banner from '@/Pages/Components/Banner'
+    import Banner from '@/Pages/Client/Components/Banner'
 
     export default {
         components: {

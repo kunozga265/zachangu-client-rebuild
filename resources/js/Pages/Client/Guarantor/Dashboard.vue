@@ -38,8 +38,8 @@
 <script>
     import AppLayout from '@/Layouts/AppLayout'
     import Welcome from '@/Jetstream/Welcome'
-    import SelectEmployer from '@/Pages/Employer/Select'
-    import Home from '@/Pages/Components/Home'
+    import SelectEmployer from '@/Pages/Client/Employer/Select'
+    import Home from '@/Pages/Client/Components/Home'
     import JetButton from '@/Jetstream/Button'
     import JetInput from '@/Jetstream/Input'
     import JetValidationErrors from '@/Jetstream/ValidationErrors.vue'

@@ -19,7 +19,7 @@
                                     class="cursor-pointer m-2 p-6 rounded active:bg-gray-200 transition"
                                     :href="route('loan.show',{'code':loan.code})"
                                 >
-                                    <div class="text-4xl text-gray-800 font-bold ">MK{{ loan.amount }}</div>
+                                    <div class="text-4xl text-gray-800 font-bold ">MK{{ numberWithCommas(loan.amount) }}</div>
                                     <div class=" flex justify-start">
                                         <alert-circle :fill-color="getStatusColor(loan.progress)"/>
                                         <span class="ml-2 text-gray-400">{{getStatus(loan.progress)}}</span>
@@ -61,6 +61,9 @@ export default {
          AlertCircle
     },
     methods: {
+        numberWithCommas(value) {
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
         getStatus(progress){
             switch (progress){
                 case '0':

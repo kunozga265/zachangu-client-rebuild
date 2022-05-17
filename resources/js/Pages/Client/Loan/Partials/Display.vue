@@ -31,7 +31,7 @@
                             <div class=" flex items-center justify-start">
                                 <alert-circle :size="48" :fill-color="getStatusColor(loan.progress)"/>
                                 <div class="ml-4">
-                                    <div class="text-4xl font-bold">MK{{loan.amount}}</div>
+                                    <div class="text-4xl font-bold">MK{{numberWithCommas(loan.amount)}}</div>
                                     <div class="text-gray-400">{{getStatus(loan.progress)}}</div>
                                 </div>
                             </div>
@@ -312,6 +312,9 @@ export default {
 
     },
     methods:{
+        numberWithCommas(value) {
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
         apply(){
             this.$inertia.post(route('loan.apply',{'code':this.loan.code}))
         },

@@ -39,7 +39,7 @@ class LoanController extends Controller
         if($role=='applied'){
             $loans=$user->loans()->orderBy('appliedDate','DESC')->get();
 
-            return Inertia::render('Loan/Index', [
+            return Inertia::render('Client/Loan/Index', [
                 'loans' => $loans,
                 'role'=>$role
             ]);
@@ -51,7 +51,7 @@ class LoanController extends Controller
                 $loan->appliedDate=date('jS F, Y',$loan->appliedDate);
             }
 
-            return Inertia::render('Guarantor/Index', [
+            return Inertia::render('Client/Guarantor/Index', [
                 'loans' => $loans,
                 'role'=>$role
             ]);
@@ -117,7 +117,7 @@ class LoanController extends Controller
 
                 $employee=Employee::where('nationalId',$loan->nationalId)->first();
 
-                return Inertia::render('Loan/Show', [
+                return Inertia::render('Client/Loan/Show', [
                     'termsAndConditions'=>$this->termsAndConditions($loan, $loan->physicalAddress,$dueDate,$employee),
                     'loan' => $loan,
                     'contractDuration'=>$contractDuration,
@@ -137,7 +137,7 @@ class LoanController extends Controller
 
     public function create()
     {
-        return Inertia::render('Loan/NewLoanApplication');
+        return Inertia::render('Client/Loan/NewLoanApplication');
         /*
          * Subscription disabled
         $user=User::find(Auth::id());

@@ -48,7 +48,7 @@
                 <jet-input-error :message="form.errors.firstName" class="mt-2" />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4" v-show="!$page.props.admin">
                 <jet-label for="middleName" value="Middle Name" />
                 <jet-input id="middleName" type="text" class="mt-1 block w-full" v-model="form.middleName" autocomplete="middle-name" />
                 <jet-input-error :message="form.errors.middleName" class="mt-2" />
@@ -61,7 +61,7 @@
             </div>
 
 
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4" v-show="!$page.props.admin">
                 <jet-label for="nationalId" value="National Id" />
                 <jet-input id="nationalId" type="text" class="mt-1 block w-full" v-model="form.nationalId" autocomplete="nationalId" :disabled="$page.props.user.employer_id != null"/>
                 <jet-input-error :message="form.errors.nationalId" class="mt-2" />
@@ -70,12 +70,12 @@
             <!-- Email -->
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="email" value="Email" />
-                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />
+                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" :disabled="adminEmail"/>
                 <jet-input-error :message="form.errors.email" class="mt-2" />
             </div>
 
 
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4" v-show="!$page.props.admin">
                 <jet-label for="address" value="Address" />
                 <jet-input id="address" type="text" class="mt-1 block w-full" v-model="form.address" autocomplete="address" />
                 <jet-input-error :message="form.errors.address" class="mt-2" />
@@ -134,16 +134,28 @@
             }
         },
 
+        computed:{
+            adminEmail(){
+                return this.user.email === "admin@zachanguloans.com"
+            }
+        },
+
         methods: {
             updateProfileInformation() {
                 if (this.$refs.photo) {
                     this.form.photo = this.$refs.photo.files[0]
                 }
 
-                this.form.post(route('user-profile-information.update'), {
-                    errorBag: 'updateProfileInformation',
-                    preserveScroll: true
-                });
+                if(this.$page.props.admin){
+                    this.form.post(route('users.admin.update.profile'), {
+                        preserveScroll: true
+                    });
+                }else{
+                    this.form.post(route('user-profile-information.update'), {
+                        errorBag: 'updateProfileInformation',
+                        preserveScroll: true
+                    });
+                }
             },
 
             selectNewPhoto() {

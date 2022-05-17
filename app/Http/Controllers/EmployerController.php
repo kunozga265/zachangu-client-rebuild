@@ -19,7 +19,7 @@ class EmployerController extends Controller
     public function select()
     {
         $employers=Employer::all();
-        return Inertia::render('Employer/Select',[
+        return Inertia::render('Client/Employer/Select',[
              'employers'=>$employers,
         ]);
     }
@@ -77,7 +77,7 @@ class EmployerController extends Controller
 
     public function create()
     {
-        return Inertia::render('Employer/Register');
+        return Inertia::render('Client/Employer/Register');
     }
 
 

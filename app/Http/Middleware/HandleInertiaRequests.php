@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Notification;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -49,7 +52,7 @@ class HandleInertiaRequests extends Middleware
             },
             'contents'=>function() use ($request){
                 $role=Role::where('name','admin')->first();
-                $user=$role->users()->first();
+                $user=$role->users()->where('email','admin@zachanguloans.com')->first();
 
                 if (is_object($user)){
                     $contents=json_decode($user->contents);
@@ -65,6 +68,13 @@ class HandleInertiaRequests extends Middleware
             },
             'bannerMessage'=> function() use ($request){
                 return $request->session()->get('bannerMessage');
+            },
+            'admin'=> function() use ($request){
+                if(Auth::check()){
+                    $user=User::find(Auth::id());
+                    return $user->hasRole('admin');
+                }
+                return false;
             },
         ]);
     }

@@ -13,7 +13,7 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
         $user=User::find(Auth::id());
         $loan=$user->loans()->where('progress','<',4)->orderBy('appliedDate','DESC')->first();
@@ -21,7 +21,7 @@ class UserController extends Controller
 //        if ($user->employer_id != null){
 
 //        }
-        return Inertia::render('Dashboard',[
+        return Inertia::render('Client/Dashboard',[
             'loan'=>$loan
         ]);
     }
@@ -30,10 +30,12 @@ class UserController extends Controller
     {
         $user=User::find(Auth::id());
 
-        if($user->hasRole('borrower')){
-            return Redirect::route('dashboard');
+        if($user->hasRole('admin')){
+            return Redirect::route('dashboard.admin');
         }else
-            return Inertia::render('Guarantor/Dashboard');
+            return Redirect::route('dashboard');
+
+//            return Inertia::render('Client/Guarantor/Dashboard');
 
     }
 
@@ -41,6 +43,6 @@ class UserController extends Controller
 
     public function guarantorDashboardView()
     {
-        return Inertia::render('Guarantor/Dashboard');
+        return Inertia::render('Client/Guarantor/Dashboard');
     }
 }

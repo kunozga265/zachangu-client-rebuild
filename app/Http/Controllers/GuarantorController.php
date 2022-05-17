@@ -36,7 +36,7 @@ class GuarantorController extends Controller
                 $user=User::find(Auth::id());
 
                 //return Loan view
-                return Inertia::render('Guarantor/Guarantee',[
+                return Inertia::render('Client/Guarantor/Guarantee',[
                     'loan'=>$loan,
                     'termsAndConditionsGuarantor'=>$this->termsAndConditions($loan, $user->address,$loan->dueDate),
                 ]);
@@ -94,7 +94,7 @@ class GuarantorController extends Controller
             $loan->workAddress=json_decode($loan->workAddress);
 
             //return Loan view
-            return Inertia::render('Guarantor/Show',[
+            return Inertia::render('Client/Guarantor/Show',[
                 'loan'=>$loan,
             ]);
         }else

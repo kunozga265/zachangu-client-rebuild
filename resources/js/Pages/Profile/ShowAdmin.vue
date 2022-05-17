@@ -1,5 +1,5 @@
 <template>
-    <app-layout>
+   <app-layout-admin>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Profile
@@ -8,6 +8,11 @@
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+
+                <div v-if="$page.props.admin">
+                    <update-content-information-form :user="$page.props.user"/>
+                    <jet-section-border class="py-6 md:py-8" />
+                </div>
 
                 <div v-if="$page.props.jetstream.canUpdateProfileInformation">
 
@@ -37,11 +42,11 @@
 <!--                </template>-->
             </div>
         </div>
-    </app-layout>
+    </app-layout-admin>
 </template>
 
 <script>
-    import AppLayout from '@/Layouts/AppLayout'
+    import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin";
     import DeleteUserForm from './DeleteUserForm'
     import JetSectionBorder from '@/Jetstream/SectionBorder'
     import LogoutOtherBrowserSessionsForm from './LogoutOtherBrowserSessionsForm'
@@ -54,7 +59,7 @@
         props: ['sessions'],
 
         components: {
-            AppLayout,
+           AppLayoutAdmin,
             DeleteUserForm,
             JetSectionBorder,
             LogoutOtherBrowserSessionsForm,
