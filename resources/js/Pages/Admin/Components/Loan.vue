@@ -9,8 +9,8 @@
 <!--                        <div class="w-28 h-28 rounded-full bg-gray-800 bg-center bg-no-repeat bg-cover" :class="'bg-[url('+url(loan.photo)+')]'"></div>-->
                         <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-gray-800 bg-center bg-no-repeat bg-cover shadow-md" :style="'background-image:url('+url(loan.photo)+')'"></div>
                         <div class="ml-4">
-                            <div class="text-2xl sm:text-3xl md:text-4xl text-gray-800 font-bold "><span class="text-base sm:text-lg md:text-xl font-black">MK</span>{{ numberWithCommas(loan.amount) }}</div>
-                            <span class="my-2 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-base font-bold"> {{loan.firstName}} {{loan.lastName}}</span>
+                            <div class="text-2xl sm:text-3xl md:text-4xl text-gray-800 font-bold "> {{loan.firstName}} {{loan.lastName}}</div>
+                            <span class="my-2 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-base sm:text-lg md:text-xl font-bold"><!--<span class="text-base sm:text-lg md:text-xl font-black">MK</span>-->MK{{ numberWithCommas(loan.amount) }} </span>
                             <div class=" flex justify-start items-center">
                                 <alert-circle :fill-color="getStatusColor(loan.progress)"/>
                                 <span class="ml-2 text-gray-600 text-xs sm:text-sm md:text-base">{{getStatus(loan.progress)}}</span>
