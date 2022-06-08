@@ -48,7 +48,7 @@
                                         <div class="text-gray-400">{{getStatus(loan.progress)}}</div>
                                     </div>
                                 </div>
-                                <div v-if="loan.paymentsMade < loan.payments && loan.progress==3" class="flex">
+                                <div v-if="loan.paymentsMade < loan.payments && loan.progress==3 && loan.schedule" class="flex">
                                     <div class="lg:ml-8 lg:border-l">
                                         <div class="lg:ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
                                             Monthly Payment
@@ -514,9 +514,15 @@ export default {
     },
     computed:{
         payment:function () {
-            return this.loan.schedule[this.loan.paymentsMade];
+            if(this.loan.paymentsMade === null )
+                return null
+            else
+                return this.loan.schedule[this.loan.paymentsMade];
         },
         paymentBalance:function () {
+            if(this.loan.paymentsMade === null )
+                return 0
+
             const index = this.loan.paymentsMade-1
             if(index<0)
                 return this.loan.schedule[this.loan.paymentsMade].openingBalance;
