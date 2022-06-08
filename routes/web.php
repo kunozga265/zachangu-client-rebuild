@@ -26,6 +26,10 @@ use Inertia\Inertia;
 //    ]);
 //});
 
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
+
 Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
 
     /*
@@ -414,17 +418,25 @@ Route::group(['middleware'=>['auth:sanctum','verified','roles']],function (){
                 'roles' =>['admin']
             ])->name('loan.admin.default');
 
+            Route::post('/make-payment/{code}', [
+                "uses" => "App\Http\Controllers\Admin\LoanController@makePayment",
+                'roles' =>['admin']
+            ])->name('loan.admin.make-payment');
 
             Route::get('/export/datestamp', [
                 "uses" => "App\Http\Controllers\Admin\LoanController@exportDatasheetPage",
                 'roles' =>['admin']
             ])->name('loan.admin.export');
 
-
             Route::get('/export/datestamp/{datestamp}', [
                 "uses" => "App\Http\Controllers\Admin\LoanController@exportDatasheet",
                 'roles' =>['admin']
             ])->name('loan.admin.export.datasheet');
+
+            Route::get('/export/pdf/{code}', [
+                "uses" => "App\Http\Controllers\Admin\LoanController@exportPDF",
+                'roles' =>['admin']
+            ])->name('loan.admin.export.pdf');
 
         });
     });
