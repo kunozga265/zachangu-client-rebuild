@@ -26,7 +26,7 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="p-12 sm:px-20 bg-white border-b border-gray-200">
 
-                        <div class="grid grid-cols-1 md:grid-cols-2">
+                        <div class="block lg:flex mb-4">
 
                             <div class=" flex items-center justify-start">
                                 <alert-circle :size="48" :fill-color="getStatusColor(loan.progress)"/>
@@ -35,11 +35,53 @@
                                     <div class="text-gray-400">{{getStatus(loan.progress)}}</div>
                                 </div>
                             </div>
+                            <div v-if="loan.paymentsMade < loan.payments && loan.progress==3" class="flex">
+                                <div class="lg:ml-8 lg:border-l">
+                                    <div class="lg:ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                        Monthly Payment
+                                        <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                MK{{numberWithCommas(payment.monthlyPayment.toFixed(2))}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="lg:ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                        Next Payment Date
+                                        <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                {{payment.calculatedDueDate}}
+                                            </span>
+                                        </div>
+                                    </div>
 
+                                </div>
+                                <div class="ml-8 border-l">
+                                    <div class="ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                        Balance
+                                        <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                MK{{numberWithCommas(Math.abs(paymentBalance).toFixed(2))}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                        Payments Made
+                                        <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                {{loan.paymentsMade}}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+<!--
                             <div class="mt-4 md:ml-4 md:mt-4 p-6 rounded border border-gray-200 bg-gray-100 text-center">
                                 <div class="text-3xl text-gray-800 ">{{loan.code}}</div>
                                 <div class="text-gray-400">Loan Code</div>
                             </div>
+-->
 
                         </div>
 
@@ -67,10 +109,51 @@
                                 <div>{{loan.closedDate}}</div>
                                 <div class="text-sm text-gray-400">Closed Date</div>
                             </div>
-
                         </div>
 
                         <jet-section-border />
+
+<!--                        Loan Schedule-->
+                        <div class="mt-8 sm:col-span-2 md:col-span-3 overflow-x-scroll" v-if="loan.schedule">
+                            <table class="md:w-full table-auto">
+                                <thead>
+                                <tr class="border-gray-400 border-b">
+                                    <th class="text-center text-sm">Payments</th>
+                                    <th class="text-right text-sm">Opening Balance</th>
+                                    <th class="text-right text-sm">Interest</th>
+                                    <th class="text-right text-sm">Monthly Payment</th>
+<!--                                    <th class="text-right text-sm">Principal</th>-->
+                                    <th class="text-right text-sm">Closing Balance</th>
+                                    <th class="text-right text-sm">Paid</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mt-2">
+                                <tr
+                                    v-for="(summary,index) in loan.schedule"
+                                    :key="index"
+                                >
+                                    <td class="text-center text-sm ">{{ summary.calculatedDueDate}}</td>
+                                    <td class="text-right text-sm ">{{ summary.openingBalance.toFixed(2) }}</td>
+                                    <td class="text-right text-sm">{{ summary.monthlyInterest.toFixed(2) }}</td>
+                                    <td class="text-right text-sm ">{{ summary.monthlyPayment.toFixed(2) }}</td>
+<!--                                    <td class="text-right text-sm">{{ summary.principal.toFixed(2) }}</td>-->
+                                    <td class="text-right text-sm ">{{ Math.abs(summary.balance).toFixed(2) }}</td>
+                                    <td v-if="summary.paid" class="text-right text-sm " >
+                                        <div class=" flex items-center justify-end">
+                                            <check :size="24" fill-color="#4ADE80"/>
+                                        </div>
+                                    </td>
+                                    <td v-else class="text-right text-sm " >
+                                        <div class=" flex items-center justify-end">
+                                            <minus :size="24" fill-color="#EF4444"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <jet-section-border  v-if="loan.schedule" />
 
                         <div class="p-12 w-full flex justify-center">
                             <div>
@@ -244,6 +327,9 @@ import JetInput from '@/Jetstream/Input'
 import JetDialogModal from '@/Jetstream/DialogModal'
  import JetSectionBorder from '@/Jetstream/SectionBorder'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/CheckCircle.vue'
+import Minus from 'vue-material-design-icons/MinusCircle.vue'
+
 export default {
     name: "Apply",
     props:[
@@ -259,7 +345,9 @@ export default {
         JetInput,
         JetDialogModal,
         JetSectionBorder,
-        AlertCircle
+        AlertCircle,
+        Check,
+        Minus
     },
     data() {
         return {
@@ -270,6 +358,16 @@ export default {
         }
     },
     computed:{
+        payment:function () {
+            return this.loan.schedule[this.loan.paymentsMade];
+        },
+        paymentBalance:function () {
+            const index = this.loan.paymentsMade-1
+            if(index<0)
+                return this.loan.schedule[this.loan.paymentsMade].openingBalance;
+            else
+                return this.loan.schedule[index].balance;
+        },
         env:function () {
             return this.$page.props;
         },
@@ -429,5 +527,8 @@ export default {
 </script>
 
 <style scoped>
+table th, table td{
+    min-width: 140px;
+}
 
 </style>

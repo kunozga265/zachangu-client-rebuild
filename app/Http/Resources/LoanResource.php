@@ -165,6 +165,10 @@ class LoanResource extends JsonResource
 //            'licenceId'             =>$this->licence_id,
 //            'otherId'               =>$this->other_id,
 //            'consent'               =>$this->consent,
+            'payments'          =>$this->payments,
+            'paymentsMade'          =>$this->paymentsMade,
+            'schedule'              => json_decode($this->schedule),
+
             'progress'              =>$this->progress,
             'score'                 =>$this->score,
             'termsAndConditions'  =>$this->termsAndConditions,

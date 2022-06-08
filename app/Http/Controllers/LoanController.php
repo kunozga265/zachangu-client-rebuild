@@ -114,6 +114,7 @@ class LoanController extends Controller
                 $loan->closedDate=$loan->closedDate!=null?date('jS F, Y',$loan->closedDate):null;
                 $loan->physicalAddress=json_decode($loan->physicalAddress);
                 $loan->workAddress=json_decode($loan->workAddress);
+                $loan->schedule=json_decode($loan->schedule);
 
                 $employee=Employee::where('nationalId',$loan->nationalId)->first();
 
@@ -424,6 +425,13 @@ class LoanController extends Controller
                 'appliedDate'=>Carbon::now()->getTimestamp()
             ]);
 
+            $role=Role::where('name','admin')->first();
+            $userAdmin=$role->users()->first();
+            $contents=json_decode($userAdmin->contents);
+
+            //Update Loan Schedule
+            $this->calculateSchedule($loan,$contents);
+
             Notification::create([
                 'contents'  =>json_encode([
                     'amount'    =>  $loan->amount,
@@ -440,9 +448,7 @@ class LoanController extends Controller
                 'subscription'=>Carbon::today()->addMonth(3)->getTimestamp()
             ]);*/
 
-            $role=Role::where('name','admin')->first();
-            $userAdmin=$role->users()->first();
-            $contents=json_decode($userAdmin->contents);
+
             $loanSummary=$this->paymentsCalculation($loan->dueDate,$loan,$contents);
 
             $employee=Employee::where('nationalId',$loan->nationalId)->first();
@@ -646,7 +652,7 @@ class LoanController extends Controller
     </thead>
     <tbody class='mt-2'>
         $loanSummary
-    </body>
+    </tbody>
 </table>
 <div class='mt-4'>4. <strong>Repayment of Loan</strong>: The Loan, together with accrued and unpaid interest and all other charges, costs and expenses, is due and payable on or before <span class='underline font-bold'>$dueDate</span>.&nbsp;</div>
 <div class='mt-4'>5. <strong>Penalty:</strong> Where the employer fails to honor the date of repayment for the loan, he/she will be given three days as grace period. If the Borrower fails to pay within the grace period of three days, after the three days, each day the borrower agrees to pay 10% of the due payment till payment is made. The Borrower will also pay to the Lender all charges the Lender met to collect the overdue payment.&nbsp;</div>
@@ -665,6 +671,56 @@ class LoanController extends Controller
 <div class='mt-4'>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first stated above.</div>
 <div class='mt-6'>$signature</div>"
             ;
+    }
+
+    private function calculateSchedule($loan,$contents){
+        //dates
+        $_dueDate=Carbon::createFromTimestamp($loan->dueDate)->subMonths($loan->payments);
+        //correct date
+        $_dueDate->addMonth();
+
+        //make calculations
+        $loanSummary=[];
+        $balance=$loan->amount;
+
+        $num=$contents->interest*pow((1+$contents->interest),$loan->payments);
+        $den=pow((1+$contents->interest),$loan->payments)-1;
+        $monthlyPayment=$loan->amount*($num/$den);
+
+        for($payment=1; $payment<=$loan->payments;$payment++){
+            $openingBalance=$balance;
+            $monthlyInterest=$balance*$contents->interest;
+            $balance=floatval($balance*(1+$contents->interest))-floatval($monthlyPayment);
+            $principal=floatval($monthlyPayment)-floatval($monthlyInterest);
+
+            /*$_openingBalance=number_format($openingBalance,2);
+            $_monthlyPayment=number_format($monthlyPayment,2);
+            $_monthlyInterest=number_format($monthlyInterest,2);
+            $_balance=number_format($balance,2);
+            $_principal=number_format($principal,2);*/
+
+            $calculatedDueDate=date('jS M, Y',$_dueDate->getTimestamp());
+
+            $loanSummary []=[
+                "calculatedDueDate" => $calculatedDueDate,
+                "openingBalance"    => $openingBalance,
+                "monthlyPayment"    => $monthlyPayment,
+                "principal"         => $principal,
+                "monthlyInterest"   => $monthlyInterest,
+                "balance"           => $balance,
+                "paid"              => false
+                ];
+
+            $_dueDate->addMonth();
+
+        }
+
+        //update loan
+        $loan->update([
+            'paymentsMade'  => 0,
+            'schedule'      => json_encode($loanSummary)
+        ]);
+
     }
 
     private function paymentsCalculation($dueDate,$loan,$contents){

@@ -11,7 +11,7 @@
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                         <div class="px-6 p-12 sm:px-20 bg-white border-b border-gray-200">
-                            <div>
+                            <div class="flex justify-space-between">
 
                                 <div v-if="loan.progress==2">
                                     <jet-button @click.native="approve" :disabled="loading">
@@ -31,13 +31,15 @@
                                     <jet-button-secondary @click.native="_default" :disabled="loading">
                                         Default
                                     </jet-button-secondary>
+
+                                    <jet-button-secondary v-show="loan.paymentsMade < loan.payments && loan.progress==3" @click.native="makePayment" :disabled="loading">
+                                        Make Payment
+                                    </jet-button-secondary>
                                 </div>
-
-
 
                                 <jet-section-border />
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2">
+                            <div class="block lg:flex my-4">
 
                                 <div class=" flex items-center justify-start">
                                     <alert-circle :size="48" :fill-color="getStatusColor(loan.progress)"/>
@@ -46,11 +48,53 @@
                                         <div class="text-gray-400">{{getStatus(loan.progress)}}</div>
                                     </div>
                                 </div>
+                                <div v-if="loan.paymentsMade < loan.payments && loan.progress==3" class="flex">
+                                    <div class="lg:ml-8 lg:border-l">
+                                        <div class="lg:ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                            Monthly Payment
+                                            <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                MK{{numberWithCommas(payment.monthlyPayment.toFixed(2))}}
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div class="lg:ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                            Next Payment Date
+                                            <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                {{payment.calculatedDueDate}}
+                                            </span>
+                                            </div>
+                                        </div>
 
-                                <div class="mt-4 md:ml-4 md:mt-4 p-6 rounded border border-gray-200 bg-gray-100 text-center">
-                                    <div class="text-3xl text-gray-800 ">{{loan.code}}</div>
-                                    <div class="text-gray-400">Loan Code</div>
+                                    </div>
+                                    <div class="ml-8 border-l">
+                                        <div class="ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                            Balance
+                                            <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                MK{{numberWithCommas(Math.abs(paymentBalance).toFixed(2))}}
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-8 m-2 text-sm text-gray-400 block block sm:flex lg:block xl:flex">
+                                            Payments Made
+                                            <div>
+                                            <span class="xl:ml-1 rounded-full py-1 px-2 bg-gray-200 text-gray-600 text-sm font-bold">
+                                                {{loan.paymentsMade}}
+                                            </span>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
+
+                                <!--
+                                                            <div class="mt-4 md:ml-4 md:mt-4 p-6 rounded border border-gray-200 bg-gray-100 text-center">
+                                                                <div class="text-3xl text-gray-800 ">{{loan.code}}</div>
+                                                                <div class="text-gray-400">Loan Code</div>
+                                                            </div>
+                                -->
 
                             </div>
 
@@ -83,6 +127,48 @@
                             </div>
 
                             <jet-section-border />
+
+                            <!--                        Loan Schedule-->
+                            <div class="mt-8 sm:col-span-2 md:col-span-3 overflow-x-scroll"  v-if="loan.schedule">
+                                <table class="md:w-full table-auto">
+                                    <thead>
+                                    <tr class="border-gray-400 border-b">
+                                        <th class="text-center text-sm">Payments</th>
+                                        <th class="text-right text-sm">Opening Balance</th>
+                                        <th class="text-right text-sm">Interest</th>
+                                        <th class="text-right text-sm">Monthly Payment</th>
+                                        <!--                                    <th class="text-right text-sm">Principal</th>-->
+                                        <th class="text-right text-sm">Closing Balance</th>
+                                        <th class="text-right text-sm">Paid</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mt-2">
+                                    <tr
+                                        v-for="(summary,index) in loan.schedule"
+                                        :key="index"
+                                    >
+                                        <td class="text-center text-sm ">{{ summary.calculatedDueDate}}</td>
+                                        <td class="text-right text-sm ">{{ summary.openingBalance.toFixed(2) }}</td>
+                                        <td class="text-right text-sm">{{ summary.monthlyInterest.toFixed(2) }}</td>
+                                        <td class="text-right text-sm ">{{ summary.monthlyPayment.toFixed(2) }}</td>
+                                        <!--                                    <td class="text-right text-sm">{{ summary.principal.toFixed(2) }}</td>-->
+                                        <td class="text-right text-sm ">{{ Math.abs(summary.balance).toFixed(2) }}</td>
+                                        <td v-if="summary.paid" class="text-right text-sm " >
+                                            <div class=" flex items-center justify-end">
+                                                <check :size="24" fill-color="#4ADE80"/>
+                                            </div>
+                                        </td>
+                                        <td v-else class="text-right text-sm " >
+                                            <div class=" flex items-center justify-end">
+                                                <minus :size="24" fill-color="#EF4444"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <jet-section-border  v-if="loan.schedule" />
 
                             <div class="p-12 w-full flex justify-center">
                                 <div>
@@ -340,6 +426,11 @@
                                                 </template>
 
                                                 <template #footer>
+                                                    <a :href="url('admin/loan/export/pdf/'+loan.code)" target="_blank">
+                                                        <jet-button>
+                                                            Print
+                                                        </jet-button>
+                                                    </a>
                                                     <jet-button-secondary @click.native="closeModal">
                                                         Close
                                                     </jet-button-secondary>
@@ -391,6 +482,8 @@ import JetDialogModal from '@/Jetstream/DialogModal'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin";
+import Check from 'vue-material-design-icons/CheckCircle.vue'
+import Minus from 'vue-material-design-icons/MinusCircle.vue'
 
 
 export default {
@@ -405,7 +498,9 @@ export default {
         JetInput,
         JetDialogModal,
         JetSectionBorder,
-        AlertCircle
+        AlertCircle,
+        Check,
+        Minus
     },
     data() {
         return {
@@ -418,6 +513,16 @@ export default {
         }
     },
     computed:{
+        payment:function () {
+            return this.loan.schedule[this.loan.paymentsMade];
+        },
+        paymentBalance:function () {
+            const index = this.loan.paymentsMade-1
+            if(index<0)
+                return this.loan.schedule[this.loan.paymentsMade].openingBalance;
+            else
+                return this.loan.schedule[index].balance;
+        },
         loan:function () {
             return this._loan.data;
         },
@@ -454,6 +559,14 @@ export default {
             this.$inertia.post(route('loan.admin.default',{code:this.loan.code}),{
                 onFinish:()=>this.loading=false
             })
+        },
+        exportPDF:function () {
+            this.$inertia.get(route('loan.admin.export.pdf',{code:this.loan.code}))
+        },
+        makePayment:function () {
+            this.loading=true
+            this.$inertia.post(route('loan.admin.make-payment',{code:this.loan.code}))
+            this.loading=false
         },
         computePhysicalAddress(physicalAddress){
             let box=(physicalAddress.box).length!==0?'P. O. Box '+physicalAddress.box:'';

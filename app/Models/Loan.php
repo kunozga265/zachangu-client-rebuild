@@ -61,7 +61,8 @@ class Loan extends Model
         'guarantorDate',
         'closedDate',
         'user_id',
-
+        'paymentsMade',
+        'schedule',
     ];
 
    /* protected $hidden=[

@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -163,6 +164,27 @@ class LoanController extends Controller
             return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
     }
 
+    public function makePayment(Request $request,$code){
+
+        $loan=Loan::where('code',$code)->first();
+
+        if (is_object($loan)) {
+
+            $paymentsMade=$loan->paymentsMade;
+            $schedule=json_decode($loan->schedule);
+            $schedule[$paymentsMade]->paid=true;
+
+            $loan->update([
+                'paymentsMade' => $paymentsMade + 1,
+                'schedule'     => json_encode($schedule)
+            ]);
+
+            return Redirect::route('loan.admin.show',['code'=>$loan->code]);
+
+        }else
+            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+    }
+
     public function uploadFile(Request $request)
     {
 
@@ -301,6 +323,27 @@ class LoanController extends Controller
 
         return Excel::download(new LoanExport($loansData),'loans.xlsx');
     }
+
+    public function exportPDF($code)
+    {
+        $loan=Loan::where('code',$code)->first();
+
+        if (is_object($loan)){
+
+            $content="<style>
+                        div{margin-bottom: 8px}
+                        </style>
+                        $loan->termsAndConditions";
+
+            $pdf=App::make('dompdf.wrapper');
+            $pdf->loadHTML($content);
+            return $pdf->stream('Loan Agreement - '.$loan->firstName ." ".$loan->lastName);
+
+        }else{
+            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+        }
+    }
+
 
 
 }
