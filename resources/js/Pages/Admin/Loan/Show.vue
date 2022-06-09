@@ -32,7 +32,7 @@
                                         Default
                                     </jet-button-secondary>
 
-                                    <jet-button-secondary v-show="loan.paymentsMade < loan.payments && loan.progress==3 && loan.schedule" @click.native="makePayment" :disabled="loading">
+                                    <jet-button-secondary v-show="loan.paymentsMade < loan.payments && loan.progress==3 && loan.schedule!=null" @click.native="makePayment" :disabled="loading">
                                         Make Payment
                                     </jet-button-secondary>
                                 </div>

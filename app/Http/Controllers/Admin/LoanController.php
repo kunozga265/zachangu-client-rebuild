@@ -74,7 +74,7 @@ class LoanController extends Controller
                 '_loan' => new LoanResource($loan),
             ]);
         }else{
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
         }
     }
 
@@ -103,13 +103,13 @@ class LoanController extends Controller
 
 
             }else
-                return Redirect::back()->with('error','Due date exceeded. Cannot approve loan.');
+                return Redirect::back()->with('bannerMessage','Due date exceeded. Cannot approve loan.');
 
 
             return Redirect::route('loan.admin.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
     }
 
 
@@ -127,7 +127,7 @@ class LoanController extends Controller
             return Redirect::route('loan.admin.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
     }
 
     public function close(Request $request,$code){
@@ -144,7 +144,7 @@ class LoanController extends Controller
             return Redirect::route('loan.admin.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
     }
 
     public function default(Request $request,$code){
@@ -161,7 +161,7 @@ class LoanController extends Controller
             return Redirect::route('loan.admin.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
     }
 
     public function makePayment(Request $request,$code){
@@ -171,18 +171,23 @@ class LoanController extends Controller
         if (is_object($loan)) {
 
             $paymentsMade=$loan->paymentsMade;
-            $schedule=json_decode($loan->schedule);
-            $schedule[$paymentsMade]->paid=true;
+            if ($loan->schedule != null){
 
-            $loan->update([
-                'paymentsMade' => $paymentsMade + 1,
-                'schedule'     => json_encode($schedule)
-            ]);
+                $schedule=json_decode($loan->schedule);
+                $schedule[$paymentsMade]->paid=true;
 
-            return Redirect::route('loan.admin.show',['code'=>$loan->code]);
+                $loan->update([
+                    'paymentsMade' => $paymentsMade + 1,
+                    'schedule'     => json_encode($schedule)
+                ]);
+
+                return Redirect::route('loan.admin.show',['code'=>$loan->code]);
+            }
+            else
+                return Redirect::back()->with('bannerMessage','Loan schedule not available');
 
         }else
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
     }
 
     public function uploadFile(Request $request)
@@ -340,7 +345,7 @@ class LoanController extends Controller
             return $pdf->stream('Loan Agreement - '.$loan->firstName ." ".$loan->lastName);
 
         }else{
-            return Redirect::route('dashboard.admin')->with('error','Invalid Loan');
+            return Redirect::route('dashboard.admin')->with('bannerMessage','Invalid Loan');
         }
     }
 

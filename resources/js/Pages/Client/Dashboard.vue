@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <banner/>
+<!--        <banner/>-->
 <!--        <select-employer  v-if="$page.props.user.employer_id == null" />-->
 <!--        <home :loan="$page.props.loan" v-else/>-->
         <home :loan="$page.props.loan"/>

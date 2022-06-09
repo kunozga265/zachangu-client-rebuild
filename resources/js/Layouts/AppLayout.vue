@@ -1,6 +1,6 @@
 <template>
     <div >
-<!--        <jet-banner />-->
+
 
         <div class="min-h-screen bg-gray-100">
             <nav style="z-index:999999" class=" fixed w-full bg-white border-b border-gray-100">
@@ -152,6 +152,7 @@
                     <slot name="header"></slot>
                 </div>
             </header>
+            <jet-banner />
 
             <!-- Page Content -->
             <main>

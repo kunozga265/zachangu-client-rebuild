@@ -188,6 +188,7 @@
                     <slot name="header"></slot>
                 </div>
             </header>
+            <jet-banner />
 
             <!-- Page Content -->
             <main>
@@ -203,7 +204,7 @@
 
 <script>
     import JetApplicationMark from '@/Jetstream/ApplicationMark'
-    import JetBanner from '@/Jetstream/Banner'
+    import JetBanner from '@/Pages/Client/Components/Banner'
     import JetDropdown from '@/Jetstream/Dropdown'
     import JetDropdownLink from '@/Jetstream/DropdownLink'
     import JetNavLink from '@/Jetstream/NavLink'
