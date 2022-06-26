@@ -222,7 +222,7 @@ class LoanController extends Controller
             return Redirect::route('loan.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::back()->with('error','You already have an active loan.');
+            return Redirect::back()->with('bannerMessage','You already have an active loan.');
 
     }
 
@@ -294,16 +294,16 @@ class LoanController extends Controller
                         $user->update([
                             'subscription'=>0
                         ]);
-                        return Redirect::route('loan.new')->with('error','Error Occurred. Please fill the entire form.');
+                        return Redirect::route('loan.new')->with('bannerMessage','Error Occurred. Please fill the entire form.');
 
                     }
 
                 }else
-                    return Redirect::back()->with('error','You already have an active loan.');
+                    return Redirect::back()->with('bannerMessage','You already have an active loan.');
             }else
-                return Redirect::route('loan.new')->with('error','Subscription has expired. Please fill the entire form');
+                return Redirect::route('loan.new')->with('bannerMessage','Subscription has expired. Please fill the entire form');
         }else
-            return Redirect::route('loan.new')->with('error','Not subscribed. Please fill the entire form.');
+            return Redirect::route('loan.new')->with('bannerMessage','Not subscribed. Please fill the entire form.');
     }
 
     public function edit($code)
@@ -321,7 +321,7 @@ class LoanController extends Controller
                 'workAddress'=>json_decode($loan->workAddress)
             ]);
         }else
-            return Redirect::back()->with('error','Invalid loan.');
+            return Redirect::back()->with('bannerMessage','Invalid loan.');
     }
 
     public function update(Request $request, $code)
@@ -382,7 +382,7 @@ class LoanController extends Controller
             return Redirect::route('loan.show',['code'=>$loan->code]);
 
         }else
-            return Redirect::back()->with('error','Invalid loan.');
+            return Redirect::back()->with('bannerMessage','Invalid loan.');
     }
 
     private function calculateDueDate($payDay,$payments)
@@ -688,7 +688,7 @@ class LoanController extends Controller
         $monthlyPayment=$loan->amount*($num/$den);
 
         for($payment=1; $payment<=$loan->payments;$payment++){
-            $openingBalance=$balance;
+            $openingBalance=floatval($balance);
             $monthlyInterest=$balance*$contents->interest;
             $balance=floatval($balance*(1+$contents->interest))-floatval($monthlyPayment);
             $principal=floatval($monthlyPayment)-floatval($monthlyInterest);
